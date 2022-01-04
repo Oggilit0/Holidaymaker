@@ -1,4 +1,4 @@
-package com.PGBJUH21;
+package com.PGBJUH21.utilities;
 
 import java.util.Scanner;
 

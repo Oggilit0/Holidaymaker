@@ -1,4 +1,4 @@
-package com.PGBJUH21;
+package com.PGBJUH21.app;
 
 public class Main {
 
