@@ -31,6 +31,7 @@ public class AppStart {
 
     private void selectAll(String table){
         String sql = "SELECT * FROM "+ table;
+        String url = "jdbc:sqlite:src/appfiles/Holidaymaker.db";
     }
 
 }

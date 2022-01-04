@@ -86,6 +86,12 @@
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Javastudier" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src\com\PGBJUH21\Database" />
+      <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="com.PGBJUH21.app.Main" />
