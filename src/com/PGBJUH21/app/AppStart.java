@@ -6,6 +6,8 @@ public class AppStart {
     private Menu menu = new Menu();
 
     AppStart(){
+        DataService ds = new DataService();
+        ds.connect();
         menu.mainMenu();
     }
 
