@@ -15,4 +15,10 @@ public class Rooms {
         this.price = price;
 
     }
+
+    public String toString(){
+
+        return "Room id: " + roomId + " Hotel id: " + hotelId + " Beds: " + beds + " Price: " + price;
+    }
+
 }

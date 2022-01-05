@@ -23,7 +23,7 @@ public class Hotel {
         this.pool = pool;
         this.kidsClub = kidsClub;
         this.entertainment = entertainment;
-        this. restaurant = restaurant;
+        this.restaurant = restaurant;
         this.disBeach = disBeach;
         this.disTown = disTown;
         this.extraBed = extraBed;
@@ -32,4 +32,14 @@ public class Hotel {
         this.review = review;
 
     }
+
+    public String toString(){
+
+        return "id: " + id + " name: " + name + " " + pool + " pool: " + kidsClub
+                + " entertainment: " + entertainment + " restaurant: " + restaurant +
+                " distance to beach: " + disBeach + "distance to town: " + disTown +
+                " extra bed: " + extraBed + " half board: " + halfBoard + " full board: "
+                + fullBoard + " review: " + review;
+    }
+
 }

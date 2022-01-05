@@ -13,4 +13,10 @@ public class Meals {
         this.meals = meals;
 
     }
+
+    public String toString(){
+
+        return "id: " + id + " Room id: " + roomId + " Meals: " + meals;
+    }
+
 }

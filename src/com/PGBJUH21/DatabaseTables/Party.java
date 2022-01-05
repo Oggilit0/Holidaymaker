@@ -13,4 +13,10 @@ public class Party {
         this.roomId = roomId;
 
     }
+
+    public String toString(){
+
+        return "Customer id: " + customerId + " Booking id: " + bookingId + " Room id: " + roomId;
+    }
+
 }
