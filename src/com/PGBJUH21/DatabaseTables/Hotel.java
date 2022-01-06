@@ -7,15 +7,15 @@ public class Hotel {
     private boolean kidsClub;
     private boolean entertainment;
     private boolean restaurant;
-    private int disBeach;
-    private int disTown;
+    private String disBeach;
+    private String disTown;
     private int extraBed;
     private int halfBoard;
     int fullBoard;
     int review;
 
     public Hotel(int id, String name, boolean pool, boolean kidsClub, boolean entertainment,
-                 boolean restaurant, int disBeach, int disTown, int extraBed, int halfBoard,
+                 boolean restaurant, String disBeach, String disTown, int extraBed, int halfBoard,
                  int fullBoard, int review) {
 
         this.id = id;
@@ -35,11 +35,18 @@ public class Hotel {
 
     public String toString(){
 
-        return "id: " + id + " name: " + name + " " + pool + " pool: " + kidsClub
-                + " entertainment: " + entertainment + " restaurant: " + restaurant +
-                " distance to beach: " + disBeach + "distance to town: " + disTown +
-                " extra bed: " + extraBed + " half board: " + halfBoard + " full board: "
-                + fullBoard + " review: " + review;
+        return "Hotel: " + name +
+                "\nPool: " + pool +
+                "\nKids Club: " + kidsClub +
+                "\nEntertainment: " + entertainment +
+                "\nRestaurant: " + restaurant +
+                "\nDistance to beach: " + disBeach +
+                "\nDistance to town: " + disTown +
+                "\nExtra bed: " + extraBed +
+                "\nHalf board: " + halfBoard +
+                "\nFull board: " + fullBoard +
+                "\nReview: " + review +
+                "\n--------------------------";
     }
 
 }
