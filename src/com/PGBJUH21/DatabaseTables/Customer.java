@@ -1,6 +1,4 @@
-package com.PGBJUH21.DatabaseTables;
-
-import java.sql.Date;
+package com.PGBJUH21.Databasetables;
 
 public class Customer {
 

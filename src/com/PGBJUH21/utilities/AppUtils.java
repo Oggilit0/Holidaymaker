@@ -44,4 +44,15 @@ public class AppUtils {
 
     }
 
+    public static boolean trueOrFalse(String question){
+        boolean bol;
+        String input = AppUtils.userInput(question);
+        if(input.equalsIgnoreCase( "yes" ) || input.equalsIgnoreCase("y")){
+            bol = true;
+        }else{
+            bol = false;
+        }
+        return bol;
+    }
+
 }

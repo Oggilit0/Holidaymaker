@@ -1,4 +1,4 @@
-package com.PGBJUH21.DatabaseTables;
+package com.PGBJUH21.Databasetables;
 
 public class Rooms {
 

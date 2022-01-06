@@ -1,10 +1,14 @@
 package com.PGBJUH21.app;
 
-import com.PGBJUH21.DatabaseTables.Customer;
-import com.PGBJUH21.DatabaseTables.Hotel;
+import com.PGBJUH21.Databasetables.Customer;
+import com.PGBJUH21.Databasetables.Hotel;
+import com.PGBJUH21.querytables.AvailableRoom;
 import com.PGBJUH21.utilities.AppUtils;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /*
 
@@ -39,7 +43,6 @@ Söktraffärar ska kunna ordnas på omdöme (högt till lågt)
 
  */
 
-// Skapa fler konstruktorer för inmatning av värden som inte behövs
 public class AppStart {
 
         private DataService ds;
@@ -47,12 +50,11 @@ public class AppStart {
     AppStart(){
         ds = new DataService();
         ds.connect();
-        chooseRoom();
-        //ArrayList<Customer> customers = ds.getAllCustomers();
-//        for(var customer : customers){
-//            System.out.println(customer);
-//        }
-
+        ArrayList<AvailableRoom> availableRooms = ds.availableRooms("2022-07-01","2022-07-08");
+        System.out.println(availableRooms.size());
+        for (AvailableRoom room : availableRooms){
+            System.out.println(room);
+        }
         mainMenu();
     }
 
@@ -98,10 +100,10 @@ public class AppStart {
         System.out.println("How many rooms do you want to book?");
         int rooms = AppUtils.userInput(1,partySize);
         System.out.println("Please answer the following questions with yes/no or y/n");
-        boolean pool = trueOrFalse("Are you looking for a hotel with a Pool?");
-        boolean entertainment = trueOrFalse("Are you looking for a hotel with Entertainment?");
-        boolean kidsClub = trueOrFalse("Are you looking for a hotel with a Childrens club?");
-        boolean restaurant = trueOrFalse("Are you looking for a hotel with a Restaurant?");
+        boolean pool = AppUtils.trueOrFalse("Are you looking for a hotel with a Pool?");
+        boolean entertainment = AppUtils.trueOrFalse("Are you looking for a hotel with Entertainment?");
+        boolean kidsClub = AppUtils.trueOrFalse("Are you looking for a hotel with a Children club?");
+        boolean restaurant = AppUtils.trueOrFalse("Are you looking for a hotel with a Restaurant?");
 
         ArrayList<Hotel> hotel = ds.getHotel(pool,entertainment,kidsClub,restaurant);
 
@@ -109,17 +111,6 @@ public class AppStart {
         for(Hotel h : hotel){
             System.out.println(h);
         }
-    }
-
-    public boolean trueOrFalse(String question){
-        boolean bol;
-        String input = AppUtils.userInput(question);
-        if(input.equalsIgnoreCase( "yes" ) || input.equalsIgnoreCase("y")){
-            bol = true;
-        }else{
-            bol = false;
-        }
-        return bol;
     }
 
     public void createBookingMenu(){
@@ -165,10 +156,24 @@ public class AppStart {
     public void editBookingMenu(){
         switch(AppUtils.menuBuilder("Edit Booking", 1,3,"Test1","Test2","Back to main menu")){
             case 1:
+                System.out.println("Search for Booking id");
+                ArrayList<String> booking = ds.getGuestsByBookingId(1);
+                for(String k : booking){
+                    System.out.println(k);
+                }
                 break;
             case 2:
+                System.out.println("Search for customer");
+                ArrayList<String> customer = ds.getCustomerFromBooking("Lee Speek");
+                for(String k : customer){
+                    System.out.println(k);
+                }
                 break;
             case 3:
+                System.out.println("Search for check in date");
+                ds.getCheckInDate();
+                break;
+            case 4:
                 mainMenu();
                 break;
         }
