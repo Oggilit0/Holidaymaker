@@ -1,6 +1,7 @@
 package com.PGBJUH21.app;
 
 import com.PGBJUH21.DatabaseTables.Customer;
+import com.PGBJUH21.DatabaseTables.Hotel;
 import com.PGBJUH21.utilities.AppUtils;
 
 import java.util.ArrayList;
@@ -46,37 +47,15 @@ public class AppStart {
     AppStart(){
         ds = new DataService();
         ds.connect();
-        ArrayList<Customer> customers = ds.getAllCustomers();
+        chooseRoom();
+        //ArrayList<Customer> customers = ds.getAllCustomers();
 //        for(var customer : customers){
 //            System.out.println(customer);
 //        }
-//        ds.createCustomer("Oskar","Jonsson","Oskar.jon@outlook.com","07011111111","1905-05-23");
-//        ds.createCustomer("Henrik","Adolfsson","Henrik.a@gmail.com","","1905-05-23");
-//        ds.createCustomer("Jan-Erik","Burman","","05044289","1905-05-23");
-//        ds.createCustomer("Svante","Einarsson","","","1905-05-23");
 
         mainMenu();
     }
 
-    private void editGuest(){
-/*
-        First name
-        last name
-        email kan vara null
-        phone kan vara null
-        birthday
-         */
-    }
-
-    private void createNewGuest(){
-        /*
-        First name
-        last name
-        email kan vara null
-        phone kan vara null
-        birthday
-         */
-    }
 
     public void mainMenu(){
         switch(AppUtils.menuBuilder("Main Menu", 1,3,"Create new booking","Edit existing booking")){
@@ -94,15 +73,11 @@ public class AppStart {
     public Customer customerForm(){
         Customer customer = null;
 
-        System.out.println("Please write your full name");
-        String input = AppUtils.userInput("^[\\p{L} .'-]+$");
+        String input = AppUtils.userInput("full name");
         String[] fullName= input.split(" ");
-        System.out.println("Please write your E-mail, Leave empty if you don't want to use one");
-        String email = AppUtils.userInput("null");
-        System.out.println("Please write your phone, Leave empty if you don't want to use one");
-        String phone = AppUtils.userInput("null");
-        System.out.println("Please write your birth date");
-        String birthdate = AppUtils.userInput("\\d{4}-\\d{2}-\\d{2}");
+        String email = AppUtils.userInput("email, leave empty if you don't want to use one");
+        String phone = AppUtils.userInput("phone, leave empty if you dont' want to use one");
+        String birthdate = AppUtils.userInput("birth date");
 
         ds.createCustomer(fullName[0], fullName[1], email,phone,birthdate);
         return customer;
@@ -116,30 +91,70 @@ public class AppStart {
         return customer;
     }
 
+    public void chooseRoom(){
+        // Might want to change the 10 to something else
+        System.out.println("How many people are you in your party?");
+        int partySize = AppUtils.userInput(1,10);
+        System.out.println("How many rooms do you want to book?");
+        int rooms = AppUtils.userInput(1,partySize);
+        System.out.println("Please answer the following questions with yes/no or y/n");
+        boolean pool = trueOrFalse("Are you looking for a hotel with a Pool?");
+        boolean entertainment = trueOrFalse("Are you looking for a hotel with Entertainment?");
+        boolean kidsClub = trueOrFalse("Are you looking for a hotel with a Childrens club?");
+        boolean restaurant = trueOrFalse("Are you looking for a hotel with a Restaurant?");
+
+        ArrayList<Hotel> hotel = ds.getHotel(pool,entertainment,kidsClub,restaurant);
+
+        System.out.println("\nFound " + hotel.size() + " matches\n");
+        for(Hotel h : hotel){
+            System.out.println(h);
+        }
+    }
+
+    public boolean trueOrFalse(String question){
+        boolean bol;
+        String input = AppUtils.userInput(question);
+        if(input.equalsIgnoreCase( "yes" ) || input.equalsIgnoreCase("y")){
+            bol = true;
+        }else{
+            bol = false;
+        }
+        return bol;
+    }
+
     public void createBookingMenu(){
-        switch(AppUtils.menuBuilder("Create Booking", 1,3,"Add guest to party","Create New Party","Back to main menu")){
+        switch(AppUtils.menuBuilder("Create Booking", 1,3,"Create New Booking","test 2","Back to main menu")){
             case 1:
+                Customer responsibleId = null;
+                String chkInDate;
+                String chkOutDate;
                 System.out.println("1. Create new guest\n2. Choose existing guest");
                 if(AppUtils.userInput(1,2) == 1){
-                    customerForm();
+                    responsibleId = customerForm();
                 }else{
-                    System.out.println("Write name of customer");
-                    String customer = AppUtils.userInput("^[\\p{L} .'-]+$");
-                    ArrayList<Customer> customers = ds.getCustomer(customer);
-                    int c = 1;
-                    for(Customer existingGuests : customers){
-                        System.out.println(c + ". " + existingGuests);
-                    }
-                    if(customers.size() > 0){
-                        AppUtils.userInput(1,customers.size());
-                    }else{
-                        System.out.println("No guest with that name");
-                    }
-
-
+                    boolean validCustomer = false;
+                    do {
+                        String customer = AppUtils.userInput("customer");
+                        ArrayList<Customer> customers = ds.getCustomer(customer);
+                        int c = 1;
+                        for (Customer existingGuests : customers) {
+                            System.out.println(c + ". " + existingGuests);
+                        }
+                        if (customers.size() > 0) {
+                            responsibleId = customers.get(AppUtils.userInput(1, customers.size()) - 1);
+                            validCustomer = true;
+                        } else {
+                            System.out.println("No guest with that name");
+                        }
+                    }while(!validCustomer);
                 }
+                chkInDate = AppUtils.userInput("Check in date");
+                chkOutDate = AppUtils.userInput("Check out date");
+                ds.createBooking(responsibleId.getId(),chkInDate,chkOutDate);
                 break;
             case 2:
+
+
                 break;
             case 3:
                 mainMenu();
