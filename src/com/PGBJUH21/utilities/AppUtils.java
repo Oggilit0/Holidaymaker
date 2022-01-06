@@ -16,22 +16,18 @@ public class AppUtils {
             }
         }while(menuChoice < minValue || menuChoice > maxValue || menuChoice == -1);
         return menuChoice;
+
     }
 
-    public static String userInput(String regEx){
-
+    public static String userInput(String title){
+        if (title.contains("?")){
+            System.out.println(title);
+        }else{
+            System.out.println("Please enter " + title);
+        }
         Scanner console = new Scanner(System.in);
         String input;
-        do{
-            if (regEx == "null"){
-                input = console.nextLine();
-                break;
-            }
-            input = console.nextLine();
-            if(!input.matches(regEx)){
-                System.out.println("Input error, please try gain");
-            }
-        }while(!input.matches(regEx));
+        input = console.nextLine();
 
         return input;
     }
