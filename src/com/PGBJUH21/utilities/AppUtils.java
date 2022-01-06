@@ -18,6 +18,24 @@ public class AppUtils {
         return menuChoice;
     }
 
+    public static String userInput(String regEx){
+
+        Scanner console = new Scanner(System.in);
+        String input;
+        do{
+            if (regEx == "null"){
+                input = console.nextLine();
+                break;
+            }
+            input = console.nextLine();
+            if(!input.matches(regEx)){
+                System.out.println("Input error, please try gain");
+            }
+        }while(!input.matches(regEx));
+
+        return input;
+    }
+
     public static int menuBuilder(String menuName, int minValue, int maxValue, String ...options){
         System.out.println(menuName);
         int i = 1;
