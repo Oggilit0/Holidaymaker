@@ -55,4 +55,8 @@ public class AppUtils {
         return bol;
     }
 
+    public static void clearScreen(){
+        System.out.println("\n".repeat(50));
+    }
+
 }

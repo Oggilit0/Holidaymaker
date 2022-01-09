@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9ae535bf-c613-4088-bb26-d790f19cf7e0" name="Changes" comment="" />
+    <list default="true" id="9ae535bf-c613-4088-bb26-d790f19cf7e0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,15 +96,18 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/drivers/sqlite-jdbc-3.36.0.3.jar" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src\com\PGBJUH21\database" />
       <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\drivers" />
+      <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src\com\PGBJUH21\database" />
       <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src\com\PGBJUH21\Database" />
       <recent name="C:\Users\goldf\Documents\Java\Holidaymaker\src" />
     </key>
@@ -130,7 +137,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641287070440</updated>
+      <workItem from="1641584743025" duration="11000" />
+      <workItem from="1641585425097" duration="511000" />
+      <workItem from="1641634963730" duration="19227000" />
+      <workItem from="1641726826630" duration="3575000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

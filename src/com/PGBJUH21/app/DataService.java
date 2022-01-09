@@ -55,11 +55,20 @@ public class DataService {
         return bookedRooms;
     }
 
-    public ArrayList<AvailableRoom> availableRooms(String chkInDate, String chkOutDate){
+    public ArrayList<AvailableRoom> availableRooms(String chkInDate, String chkOutDate, String orderBy){
         ArrayList<AvailableRoom> availableRooms = new ArrayList<>();
 
-
-
+        switch(orderBy){
+            case "name":
+                orderBy = " ORDER BY hotel_name";
+                break;
+            case "beds":
+                orderBy = " ORDER BY beds";
+                break;
+            case "price":
+                orderBy = " ORDER BY price";
+                break;
+        }
         // ? på datum
         String query = "SELECT hotel.hotel_name, room.room_id, room.beds, room.price\n" +
                 "FROM booking\n" +
@@ -68,7 +77,7 @@ public class DataService {
                 "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
                 "WHERE NOT ((? <= check_out_date AND ? >= check_in_date) \n" +
                 "    OR (? <= check_out_date AND ? >= check_in_date))\n" +
-                "GROUP BY room.room_id";
+                "GROUP BY room.room_id" + orderBy;
         try {
             // 2022-07-01
             // 2022-07-08
@@ -96,6 +105,124 @@ public class DataService {
 
     }
 
+
+    public ArrayList<AvailableRoom> availableRooms2(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
+        ArrayList<AvailableRoom> availableRooms = new ArrayList<>();
+
+        switch(orderBy){
+            case "name":
+                orderBy = " ORDER BY hotel_name";
+                break;
+            case "beds":
+                orderBy = " ORDER BY beds";
+                break;
+            case "price":
+                orderBy = " ORDER BY price";
+                break;
+        }
+        String query = "SELECT hotel.hotel_name, room.room_id, room.beds, room.price\n" +
+                "FROM booking\n" +
+                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
+                "INNER JOIN room ON party.room_id = room.room_id\n" +
+                "INNER JOIN Hotel ON room.hotel_id = hotel.hotel_id\n" +
+                "WHERE NOT ((? <= check_out_date AND ? >= check_in_date) \n" +
+                "    OR (? <= check_out_date AND ? >= check_in_date))\n"
+                ;
+
+        int counter = 0;
+        if(pool || entertainment || kidsClub || restaurant){
+            query += " AND";
+        }
+        if(pool){
+            query += " pool = ?";
+            if(entertainment || kidsClub || restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+
+        if(entertainment){
+            query += " entertainment = ?";
+            if(kidsClub || restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+        if(kidsClub){
+            query += " kids_club = ?";
+            if(restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+        if(restaurant){
+            query += " restaurant = ?";
+            counter ++;
+        }
+
+        query += " GROUP BY room.room_id" + orderBy;
+
+        try {
+
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1,chkInDate);
+            statement.setString(2,chkInDate);
+            statement.setString(3,chkOutDate);
+            statement.setString(4,chkOutDate);
+
+            if(counter != 0) {
+                if (pool) {
+                    statement.setBoolean(5, pool);
+                }
+                if (entertainment) {
+                    if (counter == 1) {
+                        statement.setBoolean(5, entertainment);
+                    } else {
+                        statement.setBoolean(6, entertainment);
+                    }
+                }
+                if (kidsClub) {
+                    if (counter == 1) {
+                        statement.setBoolean(5, kidsClub);
+                    } else if (counter == 2) {
+                        statement.setBoolean(6, kidsClub);
+                    } else {
+                        statement.setBoolean(7, kidsClub);
+                    }
+                }
+                if (restaurant) {
+                    if (counter == 1) {
+                        statement.setBoolean(5, restaurant);
+                    } else if (counter == 2) {
+                        statement.setBoolean(6, restaurant);
+                    } else if (counter == 3) {
+                        statement.setBoolean(7, restaurant);
+                    } else {
+                        statement.setBoolean(8, restaurant);
+                    }
+                }
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                String hotelName = resultSet.getString("hotel_name");
+                int roomId = resultSet.getInt("room_id");
+                int beds = resultSet.getInt("beds");
+                int price = resultSet.getInt("price");
+
+                availableRooms.add(new AvailableRoom(hotelName,roomId,beds,price));
+            }
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+
+        return availableRooms;
+
+    }
+
+
     public ArrayList<Customer> getAllCustomers(){
         // order by, string orderby, ORDER BY ?
         ArrayList<Customer> customers = new ArrayList<>();
@@ -121,17 +248,190 @@ public class DataService {
         return customers;
     }
 
-    public ArrayList<Hotel> getHotel(boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
+    public ArrayList<Hotel> orderByPrice(){
+        return null;
+    }
 
-        // order by, string orderby, ORDER BY ?
+    public ArrayList<Hotel> orderByDistance(String distance){
         ArrayList<Hotel> hotels = new ArrayList<>();
-        String query = "SELECT * FROM hotel WHERE pool = ? AND entertainment = ? AND kids_club = ? AND restaurant = ?";
+        String query = "";
+        if(distance.equalsIgnoreCase("beach")){
+            query = "SELECT * FROM hotel ORDER BY distance_beach";
+        }else{
+            query = "SELECT * FROM hotel ORDER BY distance_downtown";
+        }
+
+
         try {
             PreparedStatement statement = conn.prepareStatement(query);
-            statement.setBoolean(1,pool);
-            statement.setBoolean(2,entertainment);
-            statement.setBoolean(3,kidsClub);
-            statement.setBoolean(4,restaurant);
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                int id = resultSet.getInt("hotel_id");
+                String name = resultSet.getString("hotel_name");
+                boolean hotelPool = resultSet.getBoolean("pool");
+                boolean hotelKidsClub = resultSet.getBoolean("kids_club");
+                boolean hotelEntertainment = resultSet.getBoolean("entertainment");
+                boolean hotelRestaurant = resultSet.getBoolean("restaurant");
+                String disBeach = resultSet.getString("distance_beach");
+                String disTown = resultSet.getString("distance_downtown");
+                int extraBed = resultSet.getInt("price_extra_bed");
+                int halfBoard = resultSet.getInt("price_half_board");
+                int fullBoard = resultSet.getInt("price_full_board");
+                int review = resultSet.getInt("review");
+
+                hotels.add(new Hotel(id, name, hotelPool, hotelKidsClub, hotelEntertainment,
+                        hotelRestaurant, disBeach, disTown, extraBed, halfBoard, fullBoard, review));
+            }
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+        return hotels;
+    }
+
+    public ArrayList<Hotel> getHotel2(String query){
+
+        ArrayList<Hotel> hotels = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                int id = resultSet.getInt("hotel_id");
+                String name = resultSet.getString("hotel_name");
+                boolean hotelPool = resultSet.getBoolean("pool");
+                boolean hotelKidsClub = resultSet.getBoolean("kids_club");
+                boolean hotelEntertainment = resultSet.getBoolean("entertainment");
+                boolean hotelRestaurant = resultSet.getBoolean("restaurant");
+                String disBeach = resultSet.getString("distance_beach");
+                String disTown = resultSet.getString("distance_downtown");
+                int extraBed = resultSet.getInt("price_extra_bed");
+                int halfBoard = resultSet.getInt("price_half_board");
+                int fullBoard = resultSet.getInt("price_full_board");
+                int review = resultSet.getInt("review");
+
+
+                hotels.add(new Hotel(id, name, hotelPool, hotelKidsClub, hotelEntertainment,
+                        hotelRestaurant, disBeach, disTown, extraBed, halfBoard, fullBoard, review));
+            }
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+        return hotels;
+    }
+
+//    public String getHotelByUserChoise(boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
+//
+//        String query = "SELECT * FROM hotel";
+//        int counter = 0;
+//        if(pool || entertainment || kidsClub || restaurant){
+//            query += " WHERE";
+//        }
+//        if(pool){
+//            query += " pool = ?";
+//            if(entertainment || kidsClub || restaurant){
+//                query += " AND";
+//                counter ++;
+//            }
+//        }
+//
+//        if(entertainment){
+//            query += " entertainment = ?";
+//            if(kidsClub || restaurant){
+//                query += " AND";
+//                counter ++;
+//            }
+//        }
+//        if(kidsClub){
+//            query += " kids_club = ?";
+//            if(restaurant){
+//                query += " AND";
+//                counter ++;
+//            }
+//        }
+//        if(restaurant){
+//            query += " restaurant = ?";
+//            counter ++;
+//        }
+//
+//        return query;
+//    }
+
+
+    public ArrayList<Hotel> getHotel(boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
+
+        ArrayList<Hotel> hotels = new ArrayList<>();
+        String query = "SELECT * FROM hotel";
+        int counter = 0;
+        if(pool || entertainment || kidsClub || restaurant){
+            query += " WHERE";
+        }
+        if(pool){
+            query += " pool = ?";
+            if(entertainment || kidsClub || restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+
+        if(entertainment){
+            query += " entertainment = ?";
+            if(kidsClub || restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+        if(kidsClub){
+            query += " kids_club = ?";
+            if(restaurant){
+                query += " AND";
+                counter ++;
+            }
+        }
+        if(restaurant){
+            query += " restaurant = ?";
+            counter ++;
+        }
+
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            if(counter != 0) {
+                if (pool) {
+                    statement.setBoolean(1, pool);
+                }
+                if (entertainment) {
+                    if (counter == 1) {
+                        statement.setBoolean(1, entertainment);
+                    } else {
+                        statement.setBoolean(2, entertainment);
+                    }
+                }
+                if (kidsClub) {
+                    if (counter == 1) {
+                        statement.setBoolean(1, kidsClub);
+                    } else if (counter == 2) {
+                        statement.setBoolean(2, kidsClub);
+                    } else {
+                        statement.setBoolean(3, kidsClub);
+                    }
+                }
+                if (restaurant) {
+                    if (counter == 1) {
+                        statement.setBoolean(1, restaurant);
+                    } else if (counter == 2) {
+                        statement.setBoolean(2, restaurant);
+                    } else if (counter == 3) {
+                        statement.setBoolean(3, restaurant);
+                    } else {
+                        statement.setBoolean(4, restaurant);
+                    }
+                }
+            }
+
             ResultSet resultSet = statement.executeQuery();
 
             while(resultSet.next()){
@@ -300,5 +600,29 @@ public class DataService {
     }
 
     public void getCheckInDate() {
+    }
+
+    public Customer getCustomerFromCustomerId(int id) {
+        Customer customer = null;
+        String query = "SELECT * FROM customer WHERE customer_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+
+            int customerId = resultSet.getInt("customer_id");
+            String fName = resultSet.getString("first_name");
+            String lName = resultSet.getString("last_name");
+            String email = resultSet.getString("email");
+            String phone = resultSet.getString("phone");
+            String birthdate = resultSet.getString("birthdate");
+
+            customer = new Customer(customerId,fName,lName,email,phone,birthdate);
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+
+        return customer;
     }
 }
