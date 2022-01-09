@@ -55,58 +55,7 @@ public class DataService {
         return bookedRooms;
     }
 
-    public ArrayList<AvailableRoom> availableRooms(String chkInDate, String chkOutDate, String orderBy){
-        ArrayList<AvailableRoom> availableRooms = new ArrayList<>();
-
-        switch(orderBy){
-            case "name":
-                orderBy = " ORDER BY hotel_name";
-                break;
-            case "beds":
-                orderBy = " ORDER BY beds";
-                break;
-            case "price":
-                orderBy = " ORDER BY price";
-                break;
-        }
-        // ? på datum
-        String query = "SELECT hotel.hotel_name, room.room_id, room.beds, room.price\n" +
-                "FROM booking\n" +
-                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
-                "INNER JOIN room ON party.room_id = room.room_id\n" +
-                "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                "WHERE NOT ((? <= check_out_date AND ? >= check_in_date) \n" +
-                "    OR (? <= check_out_date AND ? >= check_in_date))\n" +
-                "GROUP BY room.room_id" + orderBy;
-        try {
-            // 2022-07-01
-            // 2022-07-08
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setString(1,chkInDate);
-            statement.setString(2,chkInDate);
-            statement.setString(3,chkOutDate);
-            statement.setString(4,chkOutDate);
-            ResultSet resultSet = statement.executeQuery();
-
-            while(resultSet.next()){
-                String hotelName = resultSet.getString("hotel_name");
-                int roomId = resultSet.getInt("room_id");
-                int beds = resultSet.getInt("beds");
-                int price = resultSet.getInt("price");
-
-                availableRooms.add(new AvailableRoom(hotelName,roomId,beds,price));
-            }
-
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
-        }
-
-        return availableRooms;
-
-    }
-
-
-    public ArrayList<AvailableRoom> availableRooms2(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
+    public ArrayList<AvailableRoom> availableRooms(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
         ArrayList<AvailableRoom> availableRooms = new ArrayList<>();
 
         switch(orderBy){
