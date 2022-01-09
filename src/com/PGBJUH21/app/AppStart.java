@@ -208,7 +208,7 @@ public class AppStart {
             sumOfDays = 30- Integer.parseInt(chkInDate.substring(8,10)) + Integer.parseInt(chkOutDate.substring(8,10));
         }
 
-        ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
+        int bookingId = ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
 
         ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
         int count = 1;
@@ -232,7 +232,23 @@ public class AppStart {
             }else {
                 halfBoard = false;
             }
-            ds.createParty()
+            System.out.println("Please pick the persons staying in the room");
+            AppUtils.userInput(1,currentParty.size());
+            int c = 1;
+            for (Customer existingGuests : currentParty) {
+                System.out.println(c + ". " + existingGuests);
+                c++;
+            }
+            System.out.println(c +". Next room");
+
+            int customerId = AppUtils.userInput(1, currentParty.size())-1;
+            if (customerId == currentParty.size()+1){
+                System.out.println("TEST 4");
+            }
+
+            ds.createParty(currentParty.get(customerId).getId(),bookingId,availableRooms.get( roomNumber[i]).getRoomId());
+
+
             totalPrice += ds.getPrice(extraBed,fullBoard,halfBoard,availableRooms.get( roomNumber[i]).getRoomId());
         }
         System.out.println(sumOfDays);

@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ae535bf-c613-4088-bb26-d790f19cf7e0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Holidaymaker/com/PGBJUH21/database/BookingRegister.db" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Holidaymaker/com/PGBJUH21/database/BookingRegister.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,6 +101,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
@@ -142,11 +144,22 @@
       <workItem from="1641584743025" duration="11000" />
       <workItem from="1641585425097" duration="511000" />
       <workItem from="1641634963730" duration="19227000" />
-      <workItem from="1641726826630" duration="15359000" />
+      <workItem from="1641726826630" duration="21757000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

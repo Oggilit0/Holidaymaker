@@ -130,14 +130,31 @@ public class DataService {
                 orderBy = " ORDER BY price";
                 break;
         }
-        String query = "SELECT hotel.hotel_name, room.room_id, room.beds, room.price\n" +
+//        String query = "SELECT hotel.hotel_name, room.room_id, room.beds, room.price, booking.check_in_date, booking.check_out_date\n" +
+//                "FROM booking\n" +
+//                "INNER JOIN party ON booking.booking_id = party.booking_id\n" +
+//                "INNER JOIN room ON party.room_id = room.room_id\n" +
+//                "INNER JOIN Hotel ON room.hotel_id = hotel.hotel_id\n" +
+//                "WHERE room.room_id NOT IN (SELECT room.room_id\n" +
+//                "FROM booking\n" +
+//                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
+//                "INNER JOIN room ON party.room_id = room.room_id\n" +
+//                "INNER JOIN Hotel ON room.hotel_id = hotel.hotel_id\n" +
+//                "WHERE NOT ((? <= check_out_date AND ? >= check_in_date) \n" +
+//                "    OR (? <= check_out_date AND ? >= check_in_date))\n";
+        String query = "SELECT room.room_id, hotel.hotel_name, room.price, room.beds\n" +
+                "FROM room\n" +
+                "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
+                "WHERE room_id NOT IN (SELECT room.room_id\n" +
                 "FROM booking\n" +
                 "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
                 "INNER JOIN room ON party.room_id = room.room_id\n" +
-                "INNER JOIN Hotel ON room.hotel_id = hotel.hotel_id\n" +
-                "WHERE NOT ((? <= check_out_date AND ? >= check_in_date) \n" +
-                "    OR (? <= check_out_date AND ? >= check_in_date))\n"
-                ;
+                "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
+                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n" +
+                "WHERE  ((? <= check_out_date AND ? >= check_in_date) \n" +
+                "    OR (? <= check_out_date AND ? >= check_in_date))\n" +
+                "GROUP BY room.room_id\n" +
+                "ORDER BY room.room_id)";
 
         int counter = 0;
         if(pool || entertainment || kidsClub || restaurant){
@@ -170,7 +187,7 @@ public class DataService {
             counter ++;
         }
 
-        query += " GROUP BY room.room_id" + orderBy;
+        query +=  " " +orderBy;
 
         try {
             PreparedStatement statement = conn.prepareStatement(query);
@@ -380,7 +397,7 @@ public class DataService {
         return createdId;
     }
 
-    public void createBooking(int responsible, String chkInDate, String chkOutDate) {
+    public int createBooking(int responsible, String chkInDate, String chkOutDate) {
         int createdId = 0;
         String query = "INSERT INTO booking (customer_id_responsible, check_in_date, check_out_date) VALUES(?, ?, ?)";
         try{
@@ -401,6 +418,7 @@ public class DataService {
         }catch (Exception e){
             e.printStackTrace();
         }
+        return createdId;
     }
 
     public ArrayList<String> getGuestsByBookingId(int bookingId) {
