@@ -8,6 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +142,7 @@
       <workItem from="1641584743025" duration="11000" />
       <workItem from="1641585425097" duration="511000" />
       <workItem from="1641634963730" duration="19227000" />
-      <workItem from="1641726826630" duration="3575000" />
+      <workItem from="1641726826630" duration="15359000" />
     </task>
     <servers />
   </component>

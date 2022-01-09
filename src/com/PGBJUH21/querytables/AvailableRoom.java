@@ -20,4 +20,7 @@ public class AvailableRoom {
                 " Price: " + price;
     }
 
+    public int getRoomId() {
+        return roomId;
+    }
 }

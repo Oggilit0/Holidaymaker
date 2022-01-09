@@ -1,17 +1,11 @@
 package com.PGBJUH21.app;
 
 import com.PGBJUH21.Databasetables.Customer;
-import com.PGBJUH21.Databasetables.Hotel;
 import com.PGBJUH21.querytables.AvailableRoom;
 import com.PGBJUH21.utilities.AppUtils;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
 
 /*
 
@@ -134,11 +128,14 @@ public class AppStart {
         ds = new DataService();
         ds.connect();
 
-        ArrayList<AvailableRoom> room = ds.availableRooms2("2022-07-01","2022-07-08","",true,true,true,true);
+        //System.out.println(ds.getPrice(true,false,true,1));
 
-        for(AvailableRoom rooms : room){
-            System.out.println(rooms);
-        }
+
+//        ArrayList<AvailableRoom> room = ds.availableRooms("2022-07-01","2022-07-08","",true,true,true,true);
+//
+//        for(AvailableRoom rooms : room){
+//            System.out.println(rooms);
+//        }
 
 //        createCustomerMenu();
 
@@ -172,50 +169,87 @@ public class AppStart {
         return  ds.getCustomerFromCustomerId(ds.createCustomer(fullName[0], fullName[1], email,phone,birthdate));
     }
 
-    public void searchForRoom(){
+    public void createBookingMenu(){
         int partySize = currentParty.size();
-        System.out.println("How many rooms do you want to book?");
-        int rooms = AppUtils.userInput(1,partySize);
+        boolean enoughSpace;
+        int rooms;
+        do{
+            System.out.println("How many rooms do you want to book?");
+            rooms = AppUtils.userInput(1,partySize);
+            System.out.println(rooms);
+            System.out.println(currentParty.size());
+            if(rooms*5 >= currentParty.size()){
+                enoughSpace = true;
+            }else{
+                System.out.println("Sorry but you need more rooms for that many guests");
+                enoughSpace = false;
+            }
+        }while(!enoughSpace);
+
         System.out.println("Please answer the following questions with yes/no or y/n or leave empty");
         boolean pool = AppUtils.trueOrFalse("Is it important that your hotel has a Pool?");
         boolean entertainment = AppUtils.trueOrFalse("Is it important that your hotel has Entertainment?");
         boolean kidsClub = AppUtils.trueOrFalse("Is it important that your hotel has a Children club?");
         boolean restaurant = AppUtils.trueOrFalse("Is it important that your hotel has a Restaurant?");
-//        String disBeach = AppUtils.userInput("how far you would like the hotel to be from the closest beach?");
-//        String disDownTown = AppUtils.userInput("how far you would like the hotel to be from the down town area?");
-//        String review = AppUtils.trueOrFalse("From a rating 1 to 5, enter your preferred hotel class");
-//        String orderBy = AppUtils.trueOrFalse("Are you looking for a hotel with a Restaurant?");
-
-        ArrayList<Hotel> hotel = ds.getHotel(pool,entertainment,kidsClub,restaurant);
-
-        System.out.println("\nFound " + hotel.size() + " matches\n");
-        for(Hotel h : hotel){
-            System.out.println(h);
-        }
-    }
-
-    public void createBookingMenu(){
-
         String chkInDate = AppUtils.userInput("which day you want to check in");
         String chkOutDate = AppUtils.userInput("which day you want to check out");
         String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price)");
-        ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate, orderBy);
+
+        int chkInDateAsInt;
+        int chkOutDateAsInt;
+        int sumOfDays = 0;
+
+        // 2022-06-01
+        if((chkInDate.charAt(6) == '6' && chkOutDate.charAt(6) == '6' || chkInDate.charAt(6) == '7' && chkOutDate.charAt(6) == '7' )){
+            chkInDateAsInt = Integer.parseInt(chkInDate.replaceAll("-",""));
+            chkOutDateAsInt = Integer.parseInt(chkOutDate.replaceAll("-",""));
+            sumOfDays = (chkOutDateAsInt - chkInDateAsInt) + 1;
+        }else if(chkInDate.charAt(6) == '6' && chkOutDate.charAt(6) == '7'){
+            sumOfDays = 30- Integer.parseInt(chkInDate.substring(8,10)) + Integer.parseInt(chkOutDate.substring(8,10));
+        }
+
+        ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
+
+        ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
         int count = 1;
         for (AvailableRoom room : availableRooms){
             System.out.println(count + " " + room);
             count++;
         }
+        int[] roomNumber = new int[rooms];
+        boolean extraBed;
+        boolean fullBoard;
+        boolean halfBoard;
+        int totalPrice = 0;
+        for(int i = 0 ; i < rooms; i++){
+            System.out.println("Please pick which room you are interested in");
+            roomNumber[i] = AppUtils.userInput(1,availableRooms.size())-1;
+            System.out.println("You picked " + availableRooms.get( roomNumber[i] ) );
+            extraBed = AppUtils.trueOrFalse("Do you want an extra bed in your room?");
+            fullBoard = AppUtils.trueOrFalse("Do you want full board?");
+            if(!fullBoard){
+                halfBoard = AppUtils.trueOrFalse("Do you want half board?");
+            }else {
+                halfBoard = false;
+            }
+            ds.createParty()
+            totalPrice += ds.getPrice(extraBed,fullBoard,halfBoard,availableRooms.get( roomNumber[i]).getRoomId());
+        }
+        System.out.println(sumOfDays);
+        System.out.println(totalPrice);
+        System.out.println("Total cost for all rooms, meals and extra beds is : " + totalPrice*sumOfDays);
 
-        searchForRoom();
 
 
-        int roomNumber = AppUtils.userInput(1,availableRooms.size())-1;
-        System.out.println("You picked " + availableRooms.get( roomNumber ) );
         if(AppUtils.trueOrFalse("Continue with your booking?")){
         }else{
             createBookingMenu();
         }
     }
+
+
+
+
 
     public void createCustomerMenu(){
         AppUtils.clearScreen();
