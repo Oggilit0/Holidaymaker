@@ -7,6 +7,13 @@ import com.PGBJUH21.querytables.BookedRoom;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ *
+ * My Queries are, in some places, modular based oon user inputs. So I've tried to paste an
+ * untouched query in every java doc for easier observation
+ *
+ *
+ */
 public class DataService {
 
     Connection conn = null;
@@ -20,9 +27,9 @@ public class DataService {
     }
 
     /**
+     * Method to fetch booked rooms from database
      *
-     *
-     * Clean query
+     * Clean query:
      *
      * SELECT room.room_id, booking.booking_id, booking.check_in_date, booking.check_out_date,
      * customer.first_name || " " || customer.last_name AS 'Full Name'
@@ -86,7 +93,10 @@ public class DataService {
     }
 
     /**
+     * Method to fetch prices for rooms + extras from database
      *
+     *
+     * Clean query:
      *
      * SELECT SUM(room.price+hotel.price_extra_bed+hotel.price_full_board) AS cost
      * FROM room
@@ -149,7 +159,7 @@ public class DataService {
     }
 
     /**
-     * Method to list all available rooms:
+     * Method to fetch all available rooms from database
      *
      *
      *Clean query:
@@ -375,7 +385,7 @@ public class DataService {
     }
 
     /**
-     *
+     *Method to update a customer in database
      *
      * Clean query:
      *
@@ -491,6 +501,7 @@ public class DataService {
 
     /**
      *
+     * Method to update a booking in database
      *
      * Clean query:
      *
@@ -522,6 +533,8 @@ public class DataService {
     }
 
     /**
+     *
+     * Method to delete a booking in database
      *
      *
      * Clean query:
@@ -593,7 +606,10 @@ public class DataService {
 
     /**
      *
-     * Clean query
+     * Method to insert a customer into database
+     *
+     *
+     * Clean query:
      *
      * INSERT INTO customer (first_name,last_name,email,phone,birthdate) VALUES(?, ?, ?, ?, ?)
      * SELECT * FROM customer WHERE customer_id = ?
@@ -641,6 +657,9 @@ public class DataService {
 
     /**
      *
+     * Method to insert a party into database
+     *
+     *
      * Clean query:
      *
      * INSERT INTO party (customer_id,booking_id,room_id) VALUES(?, ?, ?)
@@ -673,7 +692,10 @@ public class DataService {
 
     /**
      *
-     * Clean query
+     * Method to insert a booking into database
+     *
+     *
+     * Clean query:
      *
      * INSERT INTO booking (customer_id_responsible, check_in_date, check_out_date) VALUES(?, ?, ?)
      *
@@ -703,6 +725,41 @@ public class DataService {
             e.printStackTrace();
         }
         return createdId;
+    }
+
+    /**
+     * Method to fetch a customer from database
+     *
+     *
+     * Clean query:
+     *
+     * SELECT * FROM customer WHERE customer_id = ?
+     *
+     * @param id
+     * @return
+     */
+    public Customer getCustomerFromCustomerId(int id) {
+        Customer customer = null;
+        String query = "SELECT * FROM customer WHERE customer_id = ?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+
+            int customerId = resultSet.getInt("customer_id");
+            String fName = resultSet.getString("first_name");
+            String lName = resultSet.getString("last_name");
+            String email = resultSet.getString("email");
+            String phone = resultSet.getString("phone");
+            String birthdate = resultSet.getString("birthdate");
+
+            customer = new Customer(customerId,fName,lName,email,phone,birthdate);
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+        System.out.println(query);
+        return customer;
     }
 
 //    public ArrayList<String> getGuestsByBookingId(int bookingId) {
@@ -758,28 +815,4 @@ public class DataService {
 //
 //        return customers;
 //    }
-
-    public Customer getCustomerFromCustomerId(int id) {
-        Customer customer = null;
-        String query = "SELECT * FROM customer WHERE customer_id = ?";
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1,id);
-            ResultSet resultSet = statement.executeQuery();
-
-            int customerId = resultSet.getInt("customer_id");
-            String fName = resultSet.getString("first_name");
-            String lName = resultSet.getString("last_name");
-            String email = resultSet.getString("email");
-            String phone = resultSet.getString("phone");
-            String birthdate = resultSet.getString("birthdate");
-
-            customer = new Customer(customerId,fName,lName,email,phone,birthdate);
-
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
-        }
-        System.out.println(query);
-        return customer;
-    }
 }

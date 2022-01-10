@@ -198,7 +198,6 @@ public class AppStart {
                 if(customer != null){
                     this.currentParty.add(customer);
                 }
-
                 createCustomerMenu();
                 break;
             case 3:
@@ -213,7 +212,6 @@ public class AppStart {
                 mainMenu();
                 break;
         }
-
     }
 
     /**
