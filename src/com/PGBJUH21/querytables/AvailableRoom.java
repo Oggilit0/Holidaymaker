@@ -7,14 +7,16 @@ public class AvailableRoom {
     private int price;
     private int distBeach;
     private int distDowntown;
+    private int review;
 
-    public AvailableRoom(String hotelName, int roomId, int beds, int price, int distBeach, int distDowntown) {
+    public AvailableRoom(String hotelName, int roomId, int beds, int price, int distBeach, int distDowntown, int review) {
         this.hotelName = hotelName;
         this.roomId = roomId;
         this.beds = beds;
         this.price = price;
         this.distBeach = distBeach;
         this.distDowntown = distDowntown;
+        this.review = review;
     }
 
     public String toString(){
@@ -23,7 +25,8 @@ public class AvailableRoom {
                 roomId + ". Beds: " + beds +
                 ". Price: $" + price +
                 ". Distance to beach: " + distBeach + "m" +
-                ". Distance to downtown: " + distDowntown +"m";
+                ". Distance to downtown: " + distDowntown +"m" +
+                ". Review: " + review;
     }
 
     public int getRoomId() {

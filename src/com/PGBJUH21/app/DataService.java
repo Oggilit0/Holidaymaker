@@ -1,7 +1,6 @@
 package com.PGBJUH21.app;
 
 import com.PGBJUH21.Databasetables.Customer;
-import com.PGBJUH21.Databasetables.Hotel;
 import com.PGBJUH21.querytables.AvailableRoom;
 import com.PGBJUH21.querytables.BookedRoom;
 
@@ -20,36 +19,55 @@ public class DataService {
         }
     }
 
-//    public ArrayList<BookedRoom> bookedRooms(){
-//        ArrayList<BookedRoom> bookedRooms = new ArrayList<>();
-//        String query = "SELECT room.room_id, booking.booking_id, booking.check_in_date, booking.check_out_date, \n" +
-//                "customer.first_name || \" \" || customer.last_name AS 'Full Name'\n" +
-//                "FROM booking\n" +
-//                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
-//                "INNER JOIN room ON party.room_id = room.room_id\n" +
-//                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n" +
-//                "WHERE booking.check_in_date IS NOT NULL\n" +
-//                "AND booking.check_out_date IS NOT NULL\n" +
-//                "GROUP BY booking.customer_id_responsible\n" +
-//                "ORDER BY room.room_id";
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            while(resultSet.next()){
-//                int roomId = resultSet.getInt("room_id");
-//                int bookingId = resultSet.getInt("booking_id");
-//                String chkInDate = resultSet.getString("check_in_date");
-//                String chkOutDate = resultSet.getString("check_out_date");
-//                String name = resultSet.getString("Full name");
-//                bookedRooms.add(new BookedRoom(roomId,bookingId,chkInDate,chkOutDate,name));
-//            }
-//
-//        } catch (SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//        return bookedRooms;
-//    }
+    public ArrayList<BookedRoom> bookedRooms(String orderBy){
+
+        switch(orderBy){
+            case "room id":
+                orderBy = " ORDER BY room_id";
+                break;
+            case "id":
+                orderBy = " ORDER BY booking_id";
+                break;
+            case "check in date":
+                orderBy = " ORDER BY check_in_date";
+                break;
+            case "check out date":
+                orderBy = " ORDER BY check_out_date";
+                break;
+            case "name":
+                orderBy = " ORDER BY first_name";
+                break;
+        }
+
+        ArrayList<BookedRoom> bookedRooms = new ArrayList<>();
+        String query = "SELECT room.room_id, booking.booking_id, booking.check_in_date, booking.check_out_date, \n" +
+                "customer.first_name || \" \" || customer.last_name AS 'Full Name'\n" +
+                "FROM booking\n" +
+                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
+                "INNER JOIN room ON party.room_id = room.room_id\n" +
+                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n" +
+                "WHERE booking.check_in_date IS NOT NULL\n" +
+                "AND booking.check_out_date IS NOT NULL\n" +
+                "GROUP BY booking.customer_id_responsible";
+        query += orderBy;
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                int roomId = resultSet.getInt("room_id");
+                int bookingId = resultSet.getInt("booking_id");
+                String chkInDate = resultSet.getString("check_in_date");
+                String chkOutDate = resultSet.getString("check_out_date");
+                String name = resultSet.getString("Full name");
+                bookedRooms.add(new BookedRoom(roomId,bookingId,chkInDate,chkOutDate,name));
+            }
+
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+        return bookedRooms;
+    }
 
     public int getPrice(boolean extraBed, boolean fullBoard, boolean halfBoard, int room_id){
         int price = 0;
@@ -121,9 +139,13 @@ public class DataService {
             case "downtown":
                 orderBy = " ORDER BY distance_downtown";
                 break;
+            case "review":
+                orderBy = " ORDER BY review DESC";
+                break;
+
         }
 
-        String query = "SELECT room.room_id, hotel.hotel_name, room.price, room.beds, hotel.distance_beach, hotel.distance_downtown\n" +
+        String query = "SELECT room.room_id, hotel.hotel_name, room.price, room.beds, hotel.distance_beach, hotel.distance_downtown, hotel.review\n" +
                 "FROM room\n" +
                 "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
                 "WHERE room_id NOT IN (SELECT room.room_id\n" +
@@ -218,8 +240,9 @@ public class DataService {
                 int price = resultSet.getInt("price");
                 int distBeach = resultSet.getInt("distance_beach");
                 int distDowntown = resultSet.getInt("distance_downtown");
+                int review = resultSet.getInt("review");
 
-                availableRooms.add(new AvailableRoom(hotelName,roomId,beds,price,distBeach,distDowntown));
+                availableRooms.add(new AvailableRoom(hotelName,roomId,beds,price,distBeach,distDowntown,review));
             }
 
         } catch (SQLException throwables){
@@ -229,78 +252,40 @@ public class DataService {
         return availableRooms;
     }
 
+    public ArrayList<Customer> getCustomer(String methodString){
+        String[] name = methodString.split(" ");
+        boolean customerName = false;
+        switch(methodString){
+            case "id":
+                methodString = " ORDER BY customer_id";
+                break;
+            case "name":
+                methodString = " ORDER BY first_name";
+                break;
+            case "email":
+                methodString = " ORDER BY email";
+                break;
+            case "phone":
+                methodString = " ORDER BY phone";
+                break;
+            case "birthdate":
+                methodString = " ORDER BY birthdate";
+                break;
+            default:
+                methodString = " WHERE first_name = ? AND last_name = ?";
+                customerName = true;
+        }
 
-//    public ArrayList<Customer> getAllCustomers(){
-//        ArrayList<Customer> customers = new ArrayList<>();
-//        String query = "SELECT * FROM customer";
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            ResultSet resultSet = statement.executeQuery();
-//            while(resultSet.next()){
-//                // vi behöver nu hämta ut varje värde från varje column i raden
-//                int id = resultSet.getInt("customer_id");
-//                String fName = resultSet.getString("first_name");
-//                String lName = resultSet.getString("last_name");
-//                String email = resultSet.getString("email");
-//                String phone = resultSet.getString("phone");
-//                String birthdate = resultSet.getString("birthdate");
-//                customers.add(new Customer(id,fName,lName,email,phone,birthdate));
-//            }
-//
-//        } catch (SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//
-//        return customers;
-//    }
-
-
-//    public ArrayList<Hotel> orderByDistance(String distance){
-//        ArrayList<Hotel> hotels = new ArrayList<>();
-//        String query = "";
-//        if(distance.equalsIgnoreCase("beach")){
-//            query = "SELECT * FROM hotel ORDER BY distance_beach";
-//        }else{
-//            query = "SELECT * FROM hotel ORDER BY distance_downtown";
-//        }
-//
-//
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            while(resultSet.next()){
-//                int id = resultSet.getInt("hotel_id");
-//                String name = resultSet.getString("hotel_name");
-//                boolean hotelPool = resultSet.getBoolean("pool");
-//                boolean hotelKidsClub = resultSet.getBoolean("kids_club");
-//                boolean hotelEntertainment = resultSet.getBoolean("entertainment");
-//                boolean hotelRestaurant = resultSet.getBoolean("restaurant");
-//                String disBeach = resultSet.getString("distance_beach");
-//                String disTown = resultSet.getString("distance_downtown");
-//                int extraBed = resultSet.getInt("price_extra_bed");
-//                int halfBoard = resultSet.getInt("price_half_board");
-//                int fullBoard = resultSet.getInt("price_full_board");
-//                int review = resultSet.getInt("review");
-//
-//                hotels.add(new Hotel(id, name, hotelPool, hotelKidsClub, hotelEntertainment,
-//                        hotelRestaurant, disBeach, disTown, extraBed, halfBoard, fullBoard, review));
-//            }
-//
-//        } catch (SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//        return hotels;
-//    }
-
-    public ArrayList<Customer> getCustomer(String fullName){
-        String[] name = fullName.split(" ");
         ArrayList<Customer> customers = new ArrayList<>();
-        String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ?";
+
+        String query = "SELECT * FROM customer";
+        query += methodString;
         try {
             PreparedStatement statement = conn.prepareStatement(query);
-            statement.setString(1,name[0]);
-            statement.setString(2,name[1]);
+            if(customerName){
+                statement.setString(1,name[0]);
+                statement.setString(2,name[1]);
+            }
             ResultSet resultSet = statement.executeQuery();
 
             while(resultSet.next()){
