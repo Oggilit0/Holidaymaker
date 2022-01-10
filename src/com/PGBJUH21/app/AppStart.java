@@ -10,67 +10,26 @@ import java.util.ArrayList;
 
 /*
 
-*reseadministratören kan skapa bokningar (genom att alla queries för detta kan köras).
-*Grundläggande val (admin kan markera att detta ska finnas i anslutning till boendet)
-*Pool
-*Kvällsunderhållning
-*Barnklubb
-*Restaurang
-
-*Beskriva sällskapet
-*Antal personer, deras för- efternamn, email, telefonnr och födelsedatum.
-
-*När administratören pratar med en kund (t ex över telefon, chat, mail eller personligen), ska administratören kunna:
-*registrera in kunden.
-*söka efter lediga rum med specificerade sökkriterier (se lista nedan), mellan specificerade datum,
-*och sedan boka dem.
-avboka rum.
-*Administratörens gränssnitt ska vara en meny i konsollen.
-*Efter ett menyval kan administratören behöva svara på flera frågor efter varandra
-*för att samla in data, som sedan ska skrivas till databasen, eller ligga till grund för
-*sökning Exempel på en sådan konsoll-meny med följdfrågor finns här
-
-
-*Skapa bokningar med tilläggstjänster (extrasäng, halvpension, helpension).
-*Ändra detaljerna i en bokning.
 *Söka på boenden baserat på avstånd till strand (hur långt borta får boendet max ligga ifrån en strand)
 *Söka på boenden baserat på till centrum (hur långt borta får boendet max ligga ifrån ett centrum)
-*Söktraffärar ska kunna ordnas på pris (lågt till högt)
-*Söktraffärar ska kunna ordnas på omdöme (högt till lågt)
 
-
-
-
-
-*Registrera kund
-*Söka lediga rum
-*    - antal personer
-*    - pool
-*    - barnklubb
-*    - restaurang
-*    - pris
-*OCH boka dem
 Avboka rum
-*Skapa bokning
-
-VG
-*Skapa bokning med tilläggstjänst
-*    - Extrasäng
-*    - Halvpension
-*    - Helpension
-*Ändra detaljer i en bokning
-*Söka med avstånd till strand
-*Söka med avstånd till centrum
-*Ordnas på pris Lågt till högt
-
 
  */
 
+/**
+ * The class where the app is running
+ *
+ */
 public class AppStart {
 
         private DataService ds;
         private ArrayList<Customer> currentParty;
 
+    /**
+     * constructor to get things going
+     * @throws InterruptedException
+     */
     AppStart() throws InterruptedException {
         this.currentParty = new ArrayList<>();
         this.ds = new DataService();
@@ -79,7 +38,10 @@ public class AppStart {
     }
 
 
-
+    /**
+     * First menu to be shown. Here is where the user will first end up
+     * @throws InterruptedException
+     */
     public void mainMenu() throws InterruptedException {
         AppUtils.clearScreen();
         switch(AppUtils.menuBuilder("Main Menu", 1,4,"Create new booking","Edit existing booking", "Delete booking", "Search in database")){
@@ -98,6 +60,9 @@ public class AppStart {
         }
     }
 
+    /**
+     * Method to handle user input to search for booked rooms and fetch from database with corresponding method in DataService
+     */
     public void searchBookedRooms(){
         String orderBy = AppUtils.userInput("how you want to order the result. Room id, booking id, check in date, check out date, name");
         ArrayList<BookedRoom> bookedRooms =ds.bookedRooms(orderBy);
@@ -108,6 +73,9 @@ public class AppStart {
         }
     }
 
+    /**
+     * Method to handle user input to search for customers and fetch from database with corresponding method in DataService
+     */
     public void searchCustomers(){
         String orderBy = AppUtils.userInput("how you want to order the result. ,id, Name, email, phone, birthdate");
         ArrayList<Customer> customers = ds.getCustomer(orderBy);
@@ -118,10 +86,13 @@ public class AppStart {
         }
     }
 
-
+    /**
+     * Menu to handle database searches
+     * @throws InterruptedException
+     */
     public void searchDatabase() throws InterruptedException {
         AppUtils.clearScreen();
-        switch(AppUtils.menuBuilder("Search", 1,3,"Booked rooms", "Customer", "Booking", "Back to main menu")){
+        switch(AppUtils.menuBuilder("Search", 1,4,"Booked rooms", "Customer", "Booking", "Back to main menu")){
             case 1:
                 searchBookedRooms();
                 System.out.println("1. Return to menu");
@@ -137,7 +108,7 @@ public class AppStart {
                 }
                 break;
             case 3:
-                searchBooking();
+                searchBooking("");
                 System.out.println("1. Return to menu");
                 if(AppUtils.userInput(1,1) == 1){
                     searchDatabase();
@@ -149,6 +120,9 @@ public class AppStart {
         }
     }
 
+    /**
+     * Method to add guests to party
+     */
     public void addGuest(){
         this.currentParty.add(customerForm());
         boolean cont;
@@ -231,7 +205,7 @@ public class AppStart {
                 if(currentParty.size() == 0){
                     createCustomerMenu();
                 }else {
-                    createBookingMenu();
+                    createBooking();
                 }
                 break;
             case 4:
@@ -242,6 +216,9 @@ public class AppStart {
 
     }
 
+    /**
+     * Method to handle user input to send to corresponding method in DataServices to change information in database
+     */
     public void editBooking(){
         int bookingId = Integer.parseInt(AppUtils.userInput("booking id to be updated"));
         String chkInDate = AppUtils.userInput("check in date to be updated");
@@ -249,6 +226,9 @@ public class AppStart {
         ds.updateBooking(bookingId,chkInDate,chkOutDate);
     }
 
+    /**
+     * Method to handle user input to send to corresponding method in DataServices to change information in database
+     */
     public void editGuest(){
         Customer customer = chooseExistingGuest();
         String fullName = AppUtils.userInput("guest full name or leave empty");
@@ -258,6 +238,10 @@ public class AppStart {
         ds.updateCustomer(customer.getId(),fullName,email,phone,birthdate);
     }
 
+    /**
+     * Menu to handle editing of posts in database
+     * @throws InterruptedException
+     */
     public void editBookingMenu() throws InterruptedException {
         AppUtils.clearScreen();
         switch(AppUtils.menuBuilder("Edit Booking & Guests", 1,3,"Edit booking","Search for and edit guest","Back to main menu")){
@@ -275,33 +259,45 @@ public class AppStart {
         }
     }
 
-    public ArrayList<BookedRoom> searchBooking() throws InterruptedException {
-        String orderBy = AppUtils.userInput("Order of which you want the results. id, Name, Check in date, Check out date");
-        ArrayList<BookedRoom> bookedRooms = ds.bookedRooms(orderBy);
-        int counter = 1;
+    /**
+     * Method to return every booked room
+     * @param id input hard coded for a lazy programmer who didn´t have time nor energy to fix that simple problem.
+     * @return list of booked rooms
+     * @throws InterruptedException
+     */
+    public ArrayList<BookedRoom> searchBooking(String id) throws InterruptedException {
+        ArrayList<BookedRoom> bookedRooms;
+        if(id != "id"){
+            String orderBy = AppUtils.userInput("Order of which you want the results. id, Name, Check in date, Check out date");
+            bookedRooms = ds.bookedRooms(orderBy);
+        }else{
+            bookedRooms = ds.bookedRooms("id");
+        }
+
         for(BookedRoom room : bookedRooms){
-            System.out.println(counter + ". " + room);
-            counter++;
+            System.out.println( room);
         }
         return bookedRooms;
     }
 
 
-
+    /**
+     * Menu to handle deletion from database
+     * @throws InterruptedException
+     */
     public void deleteBookingMenu() throws InterruptedException {
         AppUtils.clearScreen();
-        switch(AppUtils.menuBuilder("Delete booking", 1,3,"Delete booking","Back to main menu")){
+        switch(AppUtils.menuBuilder("Delete booking", 1,2,"Delete booking","Back to main menu")){
             case 1:
-                ArrayList<BookedRoom> bookedRooms = searchBooking();
-                System.out.println(bookedRooms.size()+1 + ". Back to main menu");
-                System.out.print("Enter booking: ");
-                int bookingId = AppUtils.userInput(1,bookedRooms.size()+1);
-                if(bookingId == bookedRooms.size()+1){
+                ArrayList<BookedRoom> bookedRooms = searchBooking("id");
+                System.out.println("0. Back to main menu");
+                System.out.print("Enter booking ID: ");
+                int bookingId = AppUtils.userInput(0,1000);
+                if(bookingId == 0){
                     mainMenu();
                 }
                 ds.deleteBooking(bookingId);
                 deleteBookingMenu();
-
                 break;
             case 2:
                 mainMenu();
@@ -310,9 +306,11 @@ public class AppStart {
     }
 
 
-
+    /**
+     * Method to take indata and return a customer with corresponding method from DataService
+     * @return
+     */
     public Customer customerForm(){
-
         String input = AppUtils.userInput("full name");
         String[] fullName= input.split(" ");
         String email = AppUtils.userInput("email, leave empty if you don't want to use one");
@@ -322,26 +320,14 @@ public class AppStart {
         return  ds.getCustomerFromCustomerId(ds.createCustomer(fullName[0], fullName[1], email,phone,birthdate));
     }
 
-
     /**
-     * Method to handle the booking.
-     * I apologize for the size. Its a mess
-     * @throws InterruptedException
+     * Method to clean up create booking. Asks the user about how many rooms the party is needed
+     * @return Amount of rooms
      */
-    public void createBookingMenu() throws InterruptedException {
+    public int amountOfRooms(){
         boolean enoughSpace;
-        boolean extraBed;
-        boolean fullBoard;
-        boolean halfBoard;
-        int rooms;
-        int totalPrice = 0;
         int partySize = currentParty.size();
-        int counter = 1;
-//        int chkInDateAsInt;
-//        int chkOutDateAsInt;
-        int sumOfDays = 0;
-
-
+        int rooms;
         do{
             System.out.println("How many rooms do you want to book?");
             rooms = AppUtils.userInput(1,partySize);
@@ -354,6 +340,22 @@ public class AppStart {
                 enoughSpace = false;
             }
         }while(!enoughSpace);
+        return rooms;
+    }
+
+
+    /**
+     * Create booking method. Takes indata from user to search and create a party.
+     * Register is and insert into database with corresponding method from DataService
+     * @throws InterruptedException
+     */
+    public void createBooking() throws InterruptedException {
+        boolean extraBed;
+        boolean fullBoard;
+        boolean halfBoard;
+        int totalPrice = 0;
+        int counter = 1;
+        int rooms = amountOfRooms();
 
         System.out.println("Please answer the following questions with yes/no or y/n or leave empty");
         boolean pool = AppUtils.trueOrFalse("Is it important that your hotel has a Pool?");
@@ -363,27 +365,10 @@ public class AppStart {
         String chkInDate = AppUtils.userInput("which day you want to check in");
         String chkOutDate = AppUtils.userInput("which day you want to check out");
         String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price, distance to beach, distance to down town, review)");
-
-
-        calculateDays(chkInDate, chkOutDate);
-//        if((chkInDate.charAt(6) == '6' && chkOutDate.charAt(6) == '6' || chkInDate.charAt(6) == '7' && chkOutDate.charAt(6) == '7' )){
-//            chkInDateAsInt = Integer.parseInt(chkInDate.replaceAll("-",""));
-//            chkOutDateAsInt = Integer.parseInt(chkOutDate.replaceAll("-",""));
-//            sumOfDays = (chkOutDateAsInt - chkInDateAsInt) + 1;
-//        }else if(chkInDate.charAt(6) == '6' && chkOutDate.charAt(6) == '7'){
-//            sumOfDays = 30- Integer.parseInt(chkInDate.substring(8,10)) + Integer.parseInt(chkOutDate.substring(8,10));
-//        }
-
+        int sumOfDays = calculateDays(chkInDate, chkOutDate);
         int bookingId = ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
-
-        ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
-        int count = 1;
-        for (AvailableRoom room : availableRooms){
-            System.out.println(count + " " + room);
-            count++;
-        }
+        ArrayList<AvailableRoom> availableRooms = listAvalaibleRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
         int[] roomNumber = new int[rooms];
-
 
         for(int i = 0 ; i < rooms; i++){
             System.out.println("Please pick which room you are interested in");
@@ -398,7 +383,6 @@ public class AppStart {
             }
             System.out.println("Please pick the persons staying in the room");
 
-
             for (Customer existingGuests : currentParty) {
                 System.out.println(counter + ". " + existingGuests);
                 counter++;
@@ -409,9 +393,24 @@ public class AppStart {
             totalPrice += ds.getPrice(extraBed,fullBoard,halfBoard,availableRooms.get( roomNumber[i]).getRoomId());
         }
 
+        bookingComplete(chkInDate,chkOutDate,sumOfDays,rooms,availableRooms,roomNumber,totalPrice);
+        mainMenu();
 
 
+    }
 
+    /**
+     * Method to display everything from the booking to make the booking method cleaner
+     * @param chkInDate Check in date
+     * @param chkOutDate Check out date
+     * @param sumOfDays how many days the booking is
+     * @param rooms How many rooms the booking contains
+     * @param availableRooms List of all available rooms
+     * @param roomNumber Which room numbers that's included in booking
+     * @param totalPrice Total price for everything
+     * @throws InterruptedException
+     */
+    public void bookingComplete(String chkInDate, String chkOutDate, int sumOfDays, int rooms, ArrayList<AvailableRoom> availableRooms, int roomNumber[],int totalPrice) throws InterruptedException {
         System.out.println("Your booking is now completed");
         System.out.println("You have chosen to stay between "+ chkInDate +" - " + chkOutDate + " for " + sumOfDays + " days.");
         Thread.sleep(1000);
@@ -422,16 +421,39 @@ public class AppStart {
         Thread.sleep(1000);
         System.out.println("Total cost for all rooms, meals and extra beds is : $" + totalPrice*sumOfDays);
         System.out.println("Returning to main menu");
-        for(int i = 0; i < 8 ; i ++){
+        for(int i = 0; i < 10 ; i ++){
             System.out.print(".");
             Thread.sleep(1000);
         }
-
-        mainMenu();
-
-
     }
 
+    /**
+     * Method to clean up some code in create booking method
+     * @param chkInDate Check in date
+     * @param chkOutDate Check out date
+     * @param orderBy Order of which list will be ordered
+     * @param pool true or false
+     * @param entertainment true or false
+     * @param kidsClub true or false
+     * @param restaurant true or false
+     * @return rooms available to book
+     */
+    private ArrayList<AvailableRoom> listAvalaibleRooms(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment,boolean kidsClub,boolean restaurant) {
+        ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
+        int count = 1;
+        for (AvailableRoom room : availableRooms){
+            System.out.println(count + " " + room);
+            count++;
+        }
+        return availableRooms;
+    }
+
+    /**
+     * Calculate amount of days from 2 dates between 2022-06-01 - 2022-07-31
+     * @param chkInDate First date
+     * @param chkOutDate Second date
+     * @return Amount of days
+     */
     private int calculateDays(String chkInDate, String chkOutDate) {
         int chkInDateAsInt;
         int chkOutDateAsInt;

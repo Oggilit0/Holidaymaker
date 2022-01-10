@@ -19,10 +19,14 @@ public class BookedRoom {
 
     public String toString(){
 
-        return "Room id: " + roomId + " Booking id: " +
-                bookingId + " Check in date: " + checkInDate +
+        return " Booking id: " + bookingId +
+                " Room id: " + roomId +
+                " Check in date: " + checkInDate +
                 " Check out date: " + checkOutDate +
                 " Full name: " + fullName;
     }
 
+    public int getBookingId() {
+        return bookingId;
+    }
 }
