@@ -1,10 +1,14 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
 
+/**
+ * Unused class created before databases was implemented.
+ * Left implemented if needed in future upgrades
+ */
 public class Meals {
 
-    private int id;
-    private int roomId;
-    private String meals;
+    private final int id;
+    private final int roomId;
+    private final String meals;
 
     public Meals(int id, int roomId, String meals) {
 

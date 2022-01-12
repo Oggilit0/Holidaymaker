@@ -1,11 +1,15 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
 
+/**
+ * Unused class created before databases was implemented.
+ * Left implemented if needed in future upgrades
+ */
 public class Rooms {
 
-    private int roomId;
-    private int hotelId;
-    private int beds;
-    private int price;
+    private final int roomId;
+    private final int hotelId;
+    private final int beds;
+    private final int price;
 
     public Rooms(int roomId, int hotelId, int beds, int price) {
 

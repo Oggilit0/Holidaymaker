@@ -1,16 +1,20 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
 
+/**
+ * Unused class created before databases was implemented.
+ * Left implemented if needed in future upgrades
+ */
 public class Hotel {
-    private int id;
-    private String name;
-    private boolean pool;
-    private boolean kidsClub;
-    private boolean entertainment;
-    private boolean restaurant;
-    private String disBeach;
-    private String disTown;
-    private int extraBed;
-    private int halfBoard;
+    private final int id;
+    private final String name;
+    private final boolean pool;
+    private final boolean kidsClub;
+    private final boolean entertainment;
+    private final boolean restaurant;
+    private final String disBeach;
+    private final String disTown;
+    private final int extraBed;
+    private final int halfBoard;
     int fullBoard;
     int review;
 

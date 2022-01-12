@@ -1,13 +1,16 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
 
+/**
+ * Class that stores a customer with imported data
+ */
 public class Customer {
 
-    private int id;
-    private String fName;
-    private String lName;
-    private String email;
-    private String phone;
-    private String birthdate;
+    private final int id;
+    private final String fName;
+    private final String lName;
+    private final String email;
+    private final String phone;
+    private final String birthdate;
 
     public Customer(int id, String fName, String lName, String email, String phone, String birthdate) {
         this.id = id;
@@ -21,26 +24,6 @@ public class Customer {
 
     public int getId() {
         return id;
-    }
-
-    public String getfName() {
-        return fName;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getBirthdate() {
-        return birthdate;
     }
 
     public String toString(){

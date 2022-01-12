@@ -7,8 +7,18 @@
     <list default="true" id="9ae535bf-c613-4088-bb26-d790f19cf7e0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Holidaymaker/com/PGBJUH21/database/BookingRegister.db" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Holidaymaker/com/PGBJUH21/database/BookingRegister.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Booking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Booking.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Customer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Hotel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Hotel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Meals.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Meals.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Party.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Party.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/DatabaseTables/Rooms.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/Databasetables/Rooms.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/AppStart.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/app/DataService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/database/BookingRegister.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/AvailableRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/BookedRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/querytables/BookedRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/PGBJUH21/utilities/AppUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/PGBJUH21/utilities/AppUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +154,8 @@
       <workItem from="1641634963730" duration="19227000" />
       <workItem from="1641726826630" duration="22254000" />
       <workItem from="1641800480267" duration="12962000" />
-      <workItem from="1641815810635" duration="16689000" />
+      <workItem from="1641815810635" duration="18361000" />
+      <workItem from="1641974633700" duration="4438000" />
     </task>
     <servers />
   </component>

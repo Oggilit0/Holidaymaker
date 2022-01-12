@@ -1,13 +1,16 @@
 package com.PGBJUH21.querytables;
 
+/**
+ * Class that stores an available rooms with imported data
+ */
 public class AvailableRoom {
-    private String hotelName;
-    private int roomId;
-    private int beds;
-    private int price;
-    private int distBeach;
-    private int distDowntown;
-    private int review;
+    private final String hotelName;
+    private final int roomId;
+    private final int beds;
+    private final int price;
+    private final int distBeach;
+    private final int distDowntown;
+    private final int review;
 
     public AvailableRoom(String hotelName, int roomId, int beds, int price, int distBeach, int distDowntown, int review) {
         this.hotelName = hotelName;
@@ -32,4 +35,5 @@ public class AvailableRoom {
     public int getRoomId() {
         return roomId;
     }
+
 }

@@ -1,11 +1,12 @@
 package com.PGBJUH21.app;
 
-import com.PGBJUH21.Databasetables.Customer;
+import com.PGBJUH21.databasetables.Customer;
 import com.PGBJUH21.querytables.AvailableRoom;
 import com.PGBJUH21.querytables.BookedRoom;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  *
@@ -21,8 +22,8 @@ public class DataService {
     public void connect(){
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:src/com/PGBJUH21/database/BookingRegister.db");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
     }
 
@@ -41,11 +42,11 @@ public class DataService {
      * AND booking.check_out_date IS NOT NULL
      * GROUP BY booking.booking_id ORDER BY booking.booking_id
      *
-     * @param orderBy
-     * @return
+     * @param orderBy Input string to order by
+     * @return returns array with booked rooms
      */
     public ArrayList<BookedRoom> bookedRooms(String orderBy){
-        switch(orderBy){
+        switch(orderBy.toLowerCase(Locale.ROOT)){
             case "room id":
                 orderBy = " ORDER BY room_id";
                 break;
@@ -63,15 +64,16 @@ public class DataService {
                 break;
         }
         ArrayList<BookedRoom> bookedRooms = new ArrayList<>();
-        String query = "SELECT room.room_id, booking.booking_id, booking.check_in_date, booking.check_out_date, \n" +
-                "customer.first_name || \" \" || customer.last_name AS 'Full Name'\n" +
-                "FROM booking\n" +
-                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
-                "INNER JOIN room ON party.room_id = room.room_id\n" +
-                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n" +
-                "WHERE booking.check_in_date IS NOT NULL\n" +
-                "AND booking.check_out_date IS NOT NULL\n" +
-                "GROUP BY booking.booking_id";
+        String query = """
+                SELECT room.room_id, booking.booking_id, booking.check_in_date, booking.check_out_date,\s
+                customer.first_name || " " || customer.last_name AS 'Full Name'
+                FROM booking
+                INNER JOIN party ON booking.booking_id = party.booking_id\s
+                INNER JOIN room ON party.room_id = room.room_id
+                INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible
+                WHERE booking.check_in_date IS NOT NULL
+                AND booking.check_out_date IS NOT NULL
+                GROUP BY booking.booking_id""";
         query += orderBy;
         try {
             PreparedStatement statement = conn.prepareStatement(query);
@@ -85,10 +87,9 @@ public class DataService {
                 String name = resultSet.getString("Full name");
                 bookedRooms.add(new BookedRoom(roomId,bookingId,chkInDate,chkOutDate,name));
             }
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
-        System.out.println(query);
         return bookedRooms;
     }
 
@@ -103,46 +104,52 @@ public class DataService {
      * INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
      * WHERE room_id = ?
      *
-     * @param extraBed
-     * @param fullBoard
-     * @param halfBoard
-     * @param room_id
-     * @return
+     * @param extraBed extra bed
+     * @param fullBoard full board
+     * @param halfBoard half board
+     * @param room_id room_id
+     * @return price as an int
      */
     public int getPrice(boolean extraBed, boolean fullBoard, boolean halfBoard, int room_id){
         int price = 0;
-        String query = "";
+        String query;
 
         if(extraBed && fullBoard){
-            query = "SELECT SUM(room.price+hotel.price_extra_bed+hotel.price_full_board) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price+hotel.price_extra_bed+hotel.price_full_board) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }else if(extraBed && halfBoard){
-            query = "SELECT SUM(room.price+hotel.price_extra_bed+hotel.price_half_board) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price+hotel.price_extra_bed+hotel.price_half_board) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }else if (extraBed){
-            query = "SELECT SUM(room.price+hotel.price_extra_bed) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price+hotel.price_extra_bed) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }else if (fullBoard){
-            query = "SELECT SUM(room.price+hotel.price_full_board) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price+hotel.price_full_board) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }else if (halfBoard){
-            query = "SELECT SUM(room.price+hotel.price_half_board) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price+hotel.price_half_board) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }else {
-            query = "SELECT SUM(room.price) AS cost\n" +
-                    "FROM room\n" +
-                    "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                    "WHERE room_id = ?";
+            query = """
+                    SELECT SUM(room.price) AS cost
+                    FROM room
+                    INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                    WHERE room_id = ?""";
         }
         try {
             PreparedStatement statement = conn.prepareStatement(query);
@@ -152,8 +159,8 @@ public class DataService {
 
             price = resultSet.getInt("cost");
 
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
         return price;
     }
@@ -179,19 +186,19 @@ public class DataService {
      * ORDER BY room.room_id) AND pool = ? AND entertainment = ? AND kids_club = ? AND restaurant = ?  ORDER BY review DESC
      *
      *
-     * @param chkInDate
-     * @param chkOutDate
-     * @param orderBy
-     * @param pool
-     * @param entertainment
-     * @param kidsClub
-     * @param restaurant
-     * @return
+     * @param chkInDate check in date
+     * @param chkOutDate check out date
+     * @param orderBy order by
+     * @param pool pool
+     * @param entertainment entertainment
+     * @param kidsClub kids club
+     * @param restaurant restaurant
+     * @return list of available rooms
      */
     public ArrayList<AvailableRoom> availableRooms(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant){
         ArrayList<AvailableRoom> availableRooms = new ArrayList<>();
 
-        switch(orderBy){
+        switch(orderBy.toLowerCase(Locale.ROOT)){
             case "name":
                 orderBy = " ORDER BY hotel_name";
                 break;
@@ -213,19 +220,20 @@ public class DataService {
 
         }
 
-        String query = "SELECT room.room_id, hotel.hotel_name, room.price, room.beds, hotel.distance_beach, hotel.distance_downtown, hotel.review\n" +
-                "FROM room\n" +
-                "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                "WHERE room_id NOT IN (SELECT room.room_id\n" +
-                "FROM booking\n" +
-                "INNER JOIN party ON booking.booking_id = party.booking_id \n" +
-                "INNER JOIN room ON party.room_id = room.room_id\n" +
-                "INNER JOIN hotel ON hotel.hotel_id = room.hotel_id\n" +
-                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n" +
-                "WHERE  ((? <= check_out_date AND ? >= check_in_date) \n" +
-                "    OR (? <= check_out_date AND ? >= check_in_date))\n" +
-                "GROUP BY room.room_id\n" +
-                "ORDER BY room.room_id)";
+        String query = """
+                SELECT room.room_id, hotel.hotel_name, room.price, room.beds, hotel.distance_beach, hotel.distance_downtown, hotel.review
+                FROM room
+                INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                WHERE room_id NOT IN (SELECT room.room_id
+                FROM booking
+                INNER JOIN party ON booking.booking_id = party.booking_id\s
+                INNER JOIN room ON party.room_id = room.room_id
+                INNER JOIN hotel ON hotel.hotel_id = room.hotel_id
+                INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible
+                WHERE  ((? <= check_out_date AND ? >= check_in_date)\s
+                    OR (? <= check_out_date AND ? >= check_in_date))
+                GROUP BY room.room_id
+                ORDER BY room.room_id)""";
 
         int counter = 0;
         if(pool || entertainment || kidsClub || restaurant){
@@ -313,14 +321,14 @@ public class DataService {
                 availableRooms.add(new AvailableRoom(hotelName,roomId,beds,price,distBeach,distDowntown,review));
             }
 
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
         return availableRooms;
     }
 
     /**
-     * This methods do 2 things. Fetch a customer by name and order it by input.
+     * This method do 2 things. Fetch a customer by name and order it by input.
      * Couldn't bring myself to do 2 methods for it
      *
      *
@@ -329,8 +337,8 @@ public class DataService {
      * SELECT * FROM customer WHERE first_name = ? AND last_name = ? ORDER BY customer_id
      *
      *
-     * @param methodString
-     * @return
+     * @param methodString input string as either order by or full name
+     * @return arraylist of customers
      */
     public ArrayList<Customer> getCustomer(String methodString){
         String[] name = methodString.split(" ");
@@ -378,8 +386,8 @@ public class DataService {
                 customers.add(new Customer(id,fName,lName,email,phone,birthdate));
             }
 
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
         return customers;
     }
@@ -494,8 +502,8 @@ public class DataService {
             System.out.println("An existing guest was updated successfully");
             }
 
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
     }
 
@@ -508,9 +516,9 @@ public class DataService {
      * Update booking SET check_in_date = ? , check_out_date = ? WHERE booking_id = ?
      *
      *
-     * @param bookingId
-     * @param chkInDate
-     * @param chkOutDate
+     * @param bookingId booking id
+     * @param chkInDate check in date
+     * @param chkOutDate check out date
      */
     public void updateBooking(int bookingId, String chkInDate, String chkOutDate){
 
@@ -526,8 +534,8 @@ public class DataService {
 
             statement.executeUpdate();
 
-            } catch(SQLException throwables){
-                throwables.printStackTrace();
+            } catch(SQLException throwable){
+                throwable.printStackTrace();
             }
         System.out.println("Booking was updated successfully");
     }
@@ -541,7 +549,7 @@ public class DataService {
      *
      * DELETE FROM booking WHERE booking_id = ?
      *
-     * @param bookingId
+     * @param bookingId booking id
      */
     public void deleteBooking(int bookingId){
 
@@ -555,54 +563,55 @@ public class DataService {
 
             statement.executeUpdate();
 
-        } catch(SQLException throwables){
-            throwables.printStackTrace();
+        } catch(SQLException throwable){
+            throwable.printStackTrace();
         }
         System.out.println("booking id: " + bookingId + " successfully deleted from system");
     }
 
-    public ArrayList<String> getBookings(String orderBy){
-
-        if(orderBy.equalsIgnoreCase("name")){
-            orderBy = " ORDER BY customer.first_name";
-        }else if(orderBy.equalsIgnoreCase("check_in_date")){
-            orderBy = " ORDER BY booking.check_in_date";
-        }else if(orderBy.equalsIgnoreCase("check_out_date")){
-            orderBy = " ORDER BY booking.check_out_date";
-        }else if (orderBy.equalsIgnoreCase("booking_id")){
-            orderBy = " ORDER BY booking.booking_id";
-        }else{
-            orderBy = "";
-        }
-
-
-        ArrayList<String> bookings = new ArrayList<>();
-        String query = "SELECT booking.booking_id, (customer.first_name || \" \" || customer.last_name) AS full_name, booking.check_in_date, booking.check_out_date\n" +
-                "FROM booking\n" +
-                "INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible\n";
-        query += orderBy;
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
-
-
-
-            while(resultSet.next()){
-                String booking = "";
-                booking += "Booking id: " + resultSet.getInt("booking_id");
-                booking += " Name: " + resultSet.getString("full_name");
-                booking += " Date: " + resultSet.getString("check_in_date");
-                booking += " - " + resultSet.getString("check_out_date");
-
-                bookings.add(booking);
-            }
-
-        } catch(SQLException throwables){
-            throwables.printStackTrace();
-        }
-        System.out.println(query);
-        return bookings;
-    }
+//    public ArrayList<String> getBookings(String orderBy){
+//
+//        if(orderBy.equalsIgnoreCase("name")){
+//            orderBy = " ORDER BY customer.first_name";
+//        }else if(orderBy.equalsIgnoreCase("check_in_date")){
+//            orderBy = " ORDER BY booking.check_in_date";
+//        }else if(orderBy.equalsIgnoreCase("check_out_date")){
+//            orderBy = " ORDER BY booking.check_out_date";
+//        }else if (orderBy.equalsIgnoreCase("booking_id")){
+//            orderBy = " ORDER BY booking.booking_id";
+//        }else{
+//            orderBy = "";
+//        }
+//
+//
+//        ArrayList<String> bookings = new ArrayList<>();
+//        String query = """
+//                SELECT booking.booking_id, (customer.first_name || " " || customer.last_name) AS full_name, booking.check_in_date, booking.check_out_date
+//                FROM booking
+//                INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible
+//                """;
+//        query += orderBy;
+//        try {
+//            PreparedStatement statement = conn.prepareStatement(query);
+//            ResultSet resultSet = statement.executeQuery();
+//
+//
+//
+//            while(resultSet.next()){
+//                String booking = "";
+//                booking += "Booking id: " + resultSet.getInt("booking_id");
+//                booking += " Name: " + resultSet.getString("full_name");
+//                booking += " Date: " + resultSet.getString("check_in_date");
+//                booking += " - " + resultSet.getString("check_out_date");
+//
+//                bookings.add(booking);
+//            }
+//
+//        } catch(SQLException throwables){
+//            throwables.printStackTrace();
+//        }
+//        return bookings;
+//    }
 
     /**
      *
@@ -614,12 +623,12 @@ public class DataService {
      * INSERT INTO customer (first_name,last_name,email,phone,birthdate) VALUES(?, ?, ?, ?, ?)
      * SELECT * FROM customer WHERE customer_id = ?
      *
-     * @param fName
-     * @param lName
-     * @param email
-     * @param phone
-     * @param birthdate
-     * @return
+     * @param fName first name
+     * @param lName last name
+     * @param email email
+     * @param phone phone
+     * @param birthdate birthdate
+     * @return customer id as int
      */
     public int createCustomer(String fName, String lName, String email, String phone, String birthdate ){
         int createdId = 0;
@@ -628,21 +637,19 @@ public class DataService {
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1,fName);
             statement.setString(2,lName);
-            if(email == ""){
+            if(email.equalsIgnoreCase("")){
                 statement.setString(3,null);
             }else{
                 statement.setString(3,email);
             }
-            if(phone == ""){
+            if(phone.equalsIgnoreCase("")){
                 statement.setString(4,null);
             }else{
                 statement.setString(4,phone);
             }
 
             statement.setString(5,birthdate);
-            // Commit to database
             statement.executeUpdate();
-            // get result
             ResultSet keys = statement.getGeneratedKeys();
 
             while(keys.next()){
@@ -664,13 +671,11 @@ public class DataService {
      *
      * INSERT INTO party (customer_id,booking_id,room_id) VALUES(?, ?, ?)
      *
-     * @param customerId
-     * @param bookingId
-     * @param roomId
-     * @return
+     * @param customerId customer id
+     * @param bookingId booking id
+     * @param roomId room id
      */
-    public int createParty(int customerId, int bookingId, int roomId ){
-        int createdId = 0;
+    public void createParty(int customerId, int bookingId, int roomId ){
         String query = "INSERT INTO party (customer_id,booking_id,room_id) VALUES(?, ?, ?)";
         try{
             PreparedStatement statement = conn.prepareStatement(query);
@@ -679,15 +684,10 @@ public class DataService {
             statement.setInt(3,roomId);
 
             statement.executeUpdate();
-            ResultSet keys = statement.getGeneratedKeys();
-
-            createdId = keys.getInt(1);
-
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        return createdId;
     }
 
     /**
@@ -699,10 +699,10 @@ public class DataService {
      *
      * INSERT INTO booking (customer_id_responsible, check_in_date, check_out_date) VALUES(?, ?, ?)
      *
-     * @param responsible
-     * @param chkInDate
-     * @param chkOutDate
-     * @return
+     * @param responsible responsible id
+     * @param chkInDate check in date
+     * @param chkOutDate check out date
+     * @return returns booking id as int
      */
     public int createBooking(int responsible, String chkInDate, String chkOutDate) {
         int createdId = 0;
@@ -735,8 +735,8 @@ public class DataService {
      *
      * SELECT * FROM customer WHERE customer_id = ?
      *
-     * @param id
-     * @return
+     * @param id customer id
+     * @return customer as Customer obj
      */
     public Customer getCustomerFromCustomerId(int id) {
         Customer customer = null;
@@ -755,10 +755,9 @@ public class DataService {
 
             customer = new Customer(customerId,fName,lName,email,phone,birthdate);
 
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
+        } catch (SQLException throwable){
+            throwable.printStackTrace();
         }
-        System.out.println(query);
         return customer;
     }
 

@@ -1,21 +1,11 @@
 package com.PGBJUH21.app;
 
-import com.PGBJUH21.Databasetables.Customer;
+import com.PGBJUH21.databasetables.Customer;
 import com.PGBJUH21.querytables.AvailableRoom;
 import com.PGBJUH21.querytables.BookedRoom;
 import com.PGBJUH21.utilities.AppUtils;
 
 import java.util.ArrayList;
-
-
-/*
-
-*Söka på boenden baserat på avstånd till strand (hur långt borta får boendet max ligga ifrån en strand)
-*Söka på boenden baserat på till centrum (hur långt borta får boendet max ligga ifrån ett centrum)
-
-Avboka rum
-
- */
 
 /**
  * The class where the app is running
@@ -23,12 +13,12 @@ Avboka rum
  */
 public class AppStart {
 
-        private DataService ds;
-        private ArrayList<Customer> currentParty;
+        private final DataService ds;
+        private final ArrayList<Customer> currentParty;
 
     /**
      * constructor to get things going
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     AppStart() throws InterruptedException {
         this.currentParty = new ArrayList<>();
@@ -40,7 +30,7 @@ public class AppStart {
 
     /**
      * First menu to be shown. Here is where the user will first end up
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void mainMenu() throws InterruptedException {
         AppUtils.clearScreen();
@@ -88,7 +78,7 @@ public class AppStart {
 
     /**
      * Menu to handle database searches
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void searchDatabase() throws InterruptedException {
         AppUtils.clearScreen();
@@ -130,8 +120,6 @@ public class AppStart {
             cont = AppUtils.trueOrFalse("Add another guest? yes/no\"");
             if(cont){
                 this.currentParty.add(customerForm());
-            }else{
-                cont = false;
             }
         }while(cont);
     }
@@ -150,14 +138,14 @@ public class AppStart {
     }
 
     /**
-     * Menu interaction the let user to search for guest by name
+     * Menu interaction the let user search for guest by name
      */
     public Customer chooseExistingGuest(){
         boolean validCustomer = false;
         Customer customer = null;
         do {
             String customerName = AppUtils.userInput("name of guest, or leave empty");
-            if(customerName == ""){
+            if(customerName.equalsIgnoreCase("")){
                 break;
             }
             ArrayList<Customer> listOfCustomers = ds.getCustomer(customerName);
@@ -170,7 +158,6 @@ public class AppStart {
             }
             if (listOfCustomers.size() > 0) {
                 int customerNr = AppUtils.userInput(1, listOfCustomers.size());
-                //this.currentParty.add(listOfCustomers.get(customerNr-1));
                 customer = listOfCustomers.get(customerNr-1);
                 validCustomer = true;
             } else {
@@ -181,9 +168,9 @@ public class AppStart {
     }
 
     /**
-     * Menu to let user to create a booking party by adding new guest or choose existing.
+     * Menu to let user create a booking party by adding new guest or choose existing.
      * options to go back to main menu and clear the party, and to go forward to continue the booking
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void createCustomerMenu() throws InterruptedException {
         AppUtils.clearScreen();
@@ -238,7 +225,7 @@ public class AppStart {
 
     /**
      * Menu to handle editing of posts in database
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void editBookingMenu() throws InterruptedException {
         AppUtils.clearScreen();
@@ -259,13 +246,11 @@ public class AppStart {
 
     /**
      * Method to return every booked room
-     * @param id input hard coded for a lazy programmer who didn´t have time nor energy to fix that simple problem.
-     * @return list of booked rooms
-     * @throws InterruptedException
+     * @param id input hard coded for a lazy programmer who didn't have time nor energy to fix that simple problem.
      */
-    public ArrayList<BookedRoom> searchBooking(String id) throws InterruptedException {
+    public void searchBooking(String id){
         ArrayList<BookedRoom> bookedRooms;
-        if(id != "id"){
+        if(!id.equalsIgnoreCase("id")){
             String orderBy = AppUtils.userInput("Order of which you want the results. id, Name, Check in date, Check out date");
             bookedRooms = ds.bookedRooms(orderBy);
         }else{
@@ -275,19 +260,17 @@ public class AppStart {
         for(BookedRoom room : bookedRooms){
             System.out.println( room);
         }
-        return bookedRooms;
     }
 
 
     /**
      * Menu to handle deletion from database
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void deleteBookingMenu() throws InterruptedException {
         AppUtils.clearScreen();
         switch(AppUtils.menuBuilder("Delete booking", 1,2,"Delete booking","Back to main menu")){
             case 1:
-                ArrayList<BookedRoom> bookedRooms = searchBooking("id");
                 System.out.println("0. Back to main menu");
                 System.out.print("Enter booking ID: ");
                 int bookingId = AppUtils.userInput(0,1000);
@@ -305,8 +288,8 @@ public class AppStart {
 
 
     /**
-     * Method to take indata and return a customer with corresponding method from DataService
-     * @return
+     * Method to take data and return a customer with corresponding method from DataService
+     * @return Customer
      */
     public Customer customerForm(){
         String input = AppUtils.userInput("full name");
@@ -343,9 +326,9 @@ public class AppStart {
 
 
     /**
-     * Create booking method. Takes indata from user to search and create a party.
+     * Create booking method. Takes data from user to search and create a party.
      * Register is and insert into database with corresponding method from DataService
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void createBooking() throws InterruptedException {
         boolean extraBed;
@@ -362,10 +345,10 @@ public class AppStart {
         boolean restaurant = AppUtils.trueOrFalse("Is it important that your hotel has a Restaurant?");
         String chkInDate = AppUtils.userInput("which day you want to check in");
         String chkOutDate = AppUtils.userInput("which day you want to check out");
-        String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price, distance to beach, distance to down town, review)");
+        String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price, beach(distance to), downtown(distance to), review)");
         int sumOfDays = calculateDays(chkInDate, chkOutDate);
         int bookingId = ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
-        ArrayList<AvailableRoom> availableRooms = listAvalaibleRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
+        ArrayList<AvailableRoom> availableRooms = listAvailableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
         int[] roomNumber = new int[rooms];
 
         for(int i = 0 ; i < rooms; i++){
@@ -386,12 +369,15 @@ public class AppStart {
                 counter++;
             }
 
+
+
             int customerId = AppUtils.userInput(1, currentParty.size())-1;
             ds.createParty(currentParty.get(customerId).getId(),bookingId,availableRooms.get( roomNumber[i]).getRoomId());
             totalPrice += ds.getPrice(extraBed,fullBoard,halfBoard,availableRooms.get( roomNumber[i]).getRoomId());
         }
 
         bookingComplete(chkInDate,chkOutDate,sumOfDays,rooms,availableRooms,roomNumber,totalPrice);
+        this.currentParty.clear();
         mainMenu();
 
 
@@ -406,7 +392,7 @@ public class AppStart {
      * @param availableRooms List of all available rooms
      * @param roomNumber Which room numbers that's included in booking
      * @param totalPrice Total price for everything
-     * @throws InterruptedException
+     * @throws InterruptedException For sleep to work
      */
     public void bookingComplete(String chkInDate, String chkOutDate, int sumOfDays, int rooms, ArrayList<AvailableRoom> availableRooms, int roomNumber[],int totalPrice) throws InterruptedException {
         System.out.println("Your booking is now completed");
@@ -436,7 +422,7 @@ public class AppStart {
      * @param restaurant true or false
      * @return rooms available to book
      */
-    private ArrayList<AvailableRoom> listAvalaibleRooms(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment,boolean kidsClub,boolean restaurant) {
+    private ArrayList<AvailableRoom> listAvailableRooms(String chkInDate, String chkOutDate, String orderBy, boolean pool, boolean entertainment, boolean kidsClub, boolean restaurant) {
         ArrayList<AvailableRoom> availableRooms = ds.availableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
         int count = 1;
         for (AvailableRoom room : availableRooms){

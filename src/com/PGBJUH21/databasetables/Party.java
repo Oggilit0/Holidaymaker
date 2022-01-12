@@ -1,10 +1,14 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
 
+/**
+ * Unused class created before databases was implemented.
+ * Left implemented if needed in future upgrades
+ */
 public class Party {
 
-    private int customerId;
-    private int bookingId;
-    private int roomId;
+    private final int customerId;
+    private final int bookingId;
+    private final int roomId;
 
     public Party(int customerId, int bookingId, int roomId) {
 

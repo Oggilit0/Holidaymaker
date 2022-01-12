@@ -1,10 +1,15 @@
-package com.PGBJUH21.Databasetables;
+package com.PGBJUH21.databasetables;
+
+/**
+ * Unused class created before databases was implemented.
+ * Left implemented if needed in future upgrades
+ */
 public class Booking {
 
-    private int id;
-    private int customerId;
-    private java.sql.Date checkInDate;
-    private java.sql.Date checkOutDate;
+    private final int id;
+    private final int customerId;
+    private final java.sql.Date checkInDate;
+    private final java.sql.Date checkOutDate;
 
     public Booking(int id, int customerId, java.sql.Date checkInDate, java.sql.Date checkOutDate) {
         this.id = id;
