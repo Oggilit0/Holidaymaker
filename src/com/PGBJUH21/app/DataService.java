@@ -569,50 +569,6 @@ public class DataService {
         System.out.println("booking id: " + bookingId + " successfully deleted from system");
     }
 
-//    public ArrayList<String> getBookings(String orderBy){
-//
-//        if(orderBy.equalsIgnoreCase("name")){
-//            orderBy = " ORDER BY customer.first_name";
-//        }else if(orderBy.equalsIgnoreCase("check_in_date")){
-//            orderBy = " ORDER BY booking.check_in_date";
-//        }else if(orderBy.equalsIgnoreCase("check_out_date")){
-//            orderBy = " ORDER BY booking.check_out_date";
-//        }else if (orderBy.equalsIgnoreCase("booking_id")){
-//            orderBy = " ORDER BY booking.booking_id";
-//        }else{
-//            orderBy = "";
-//        }
-//
-//
-//        ArrayList<String> bookings = new ArrayList<>();
-//        String query = """
-//                SELECT booking.booking_id, (customer.first_name || " " || customer.last_name) AS full_name, booking.check_in_date, booking.check_out_date
-//                FROM booking
-//                INNER JOIN customer ON customer.customer_id = booking.customer_id_responsible
-//                """;
-//        query += orderBy;
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//
-//
-//            while(resultSet.next()){
-//                String booking = "";
-//                booking += "Booking id: " + resultSet.getInt("booking_id");
-//                booking += " Name: " + resultSet.getString("full_name");
-//                booking += " Date: " + resultSet.getString("check_in_date");
-//                booking += " - " + resultSet.getString("check_out_date");
-//
-//                bookings.add(booking);
-//            }
-//
-//        } catch(SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//        return bookings;
-//    }
-
     /**
      *
      * Method to insert a customer into database
@@ -760,58 +716,4 @@ public class DataService {
         }
         return customer;
     }
-
-//    public ArrayList<String> getGuestsByBookingId(int bookingId) {
-//        ArrayList<String> customers = new ArrayList<>();
-//        String query = "SELECT DISTINCT booking.booking_id, customer.first_name || \" \" || customer.last_name AS 'Full Name'\n" +
-//                "FROM booking\n" +
-//                "INNER JOIN customer ON customer.customer_id = party.customer_id\n" +
-//                "INNER JOIN party ON booking.booking_id = party.booking_id\n" +
-//                "WHERE booking.booking_id = ?\n" +
-//                "ORDER BY booking.booking_id";
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            statement.setInt(1,bookingId);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            while(resultSet.next()){
-//                //int id = resultSet.getInt("booking_id");
-//                String fName = resultSet.getString("Full Name");
-//                customers.add(fName);
-//            }
-//
-//        } catch (SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//
-//        return customers;
-//    }
-
-//    public ArrayList<String> getCustomerFromBooking(String name) {
-//        ArrayList<String> customers = new ArrayList<>();
-//        String[] splitName = name.split(" ");
-//        String query = "SELECT DISTINCT booking.booking_id, customer.first_name || \" \" || customer.last_name AS 'Full Name'\n" +
-//                "FROM booking\n" +
-//                "INNER JOIN customer ON customer.customer_id = party.customer_id\n" +
-//                "INNER JOIN party ON booking.booking_id = party.booking_id\n" +
-//                "WHERE customer.first_name = ? AND customer.last_name = ? \n" +
-//                "ORDER BY booking.booking_id";
-//        try {
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            statement.setString(1,splitName[0]);
-//            statement.setString(2,splitName[1]);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            while(resultSet.next()){
-//                int id = resultSet.getInt("booking_id");
-//                String fName = resultSet.getString("Full Name");
-//                customers.add(id + " " + fName);
-//            }
-//
-//        } catch (SQLException throwables){
-//            throwables.printStackTrace();
-//        }
-//
-//        return customers;
-//    }
 }
