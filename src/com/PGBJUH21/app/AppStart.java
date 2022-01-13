@@ -152,6 +152,7 @@ public class AppStart {
             int c = 1;
             for (Customer existingGuests : listOfCustomers) {
                 System.out.println(c + ". " + existingGuests);
+                c++;
             }
             if (listOfCustomers.size() > 0){
                 System.out.print("Choose guest: ");
@@ -312,7 +313,6 @@ public class AppStart {
         do{
             System.out.println("How many rooms do you want to book?");
             rooms = AppUtils.userInput(1,partySize);
-            System.out.println(rooms);
             System.out.println(currentParty.size());
             if(rooms*5 >= currentParty.size()){
                 enoughSpace = true;
@@ -334,22 +334,39 @@ public class AppStart {
         boolean extraBed;
         boolean fullBoard;
         boolean halfBoard;
+        boolean emptyList;
         int totalPrice = 0;
         int counter = 1;
         int rooms = amountOfRooms();
+        int[] roomNumber;
+        int sumOfDays;
+        int bookingId;
+        String chkInDate;
+        String chkOutDate;
+        ArrayList<AvailableRoom> availableRooms;
 
-        System.out.println("Please answer the following questions with yes/no or y/n or leave empty");
-        boolean pool = AppUtils.trueOrFalse("Is it important that your hotel has a Pool?");
-        boolean entertainment = AppUtils.trueOrFalse("Is it important that your hotel has Entertainment?");
-        boolean kidsClub = AppUtils.trueOrFalse("Is it important that your hotel has a Children club?");
-        boolean restaurant = AppUtils.trueOrFalse("Is it important that your hotel has a Restaurant?");
-        String chkInDate = AppUtils.userInput("which day you want to check in");
-        String chkOutDate = AppUtils.userInput("which day you want to check out");
-        String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price, beach(distance to), downtown(distance to), review)");
-        int sumOfDays = calculateDays(chkInDate, chkOutDate);
-        int bookingId = ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
-        ArrayList<AvailableRoom> availableRooms = listAvailableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
-        int[] roomNumber = new int[rooms];
+        do{
+            System.out.println("Please answer the following questions with yes/no or y/n or leave empty");
+            boolean pool = AppUtils.trueOrFalse("Is it important that your hotel has a Pool?");
+            boolean entertainment = AppUtils.trueOrFalse("Is it important that your hotel has Entertainment?");
+            boolean kidsClub = AppUtils.trueOrFalse("Is it important that your hotel has a Children club?");
+            boolean restaurant = AppUtils.trueOrFalse("Is it important that your hotel has a Restaurant?");
+            chkInDate = AppUtils.userInput("which day you want to check in");
+            chkOutDate = AppUtils.userInput("which day you want to check out");
+            String orderBy = AppUtils.userInput("in which way you want to order the result (name, beds, price, beach(distance to), downtown(distance to), review)");
+            sumOfDays = calculateDays(chkInDate, chkOutDate);
+            bookingId = ds.createBooking(currentParty.get(0).getId(),chkInDate,chkOutDate);
+            availableRooms = listAvailableRooms(chkInDate,chkOutDate,orderBy,pool,entertainment,kidsClub,restaurant);
+            roomNumber = new int[rooms];
+
+            if(availableRooms.isEmpty()){
+                emptyList = true;
+                System.out.println("No rooms found, please try again!");
+            }else{
+                emptyList = false;
+            }
+        }while(emptyList);
+
 
         for(int i = 0 ; i < rooms; i++){
             System.out.println("Please pick which room you are interested in");
@@ -450,6 +467,7 @@ public class AppStart {
             sumOfDays = 30- Integer.parseInt(chkInDate.substring(8,10)) + Integer.parseInt(chkOutDate.substring(8,10));
         }
         return sumOfDays;
+
     }
 
 
