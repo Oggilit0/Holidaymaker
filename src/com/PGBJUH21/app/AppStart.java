@@ -313,7 +313,6 @@ public class AppStart {
         do{
             System.out.println("How many rooms do you want to book?");
             rooms = AppUtils.userInput(1,partySize);
-            System.out.println(currentParty.size());
             if(rooms*5 >= currentParty.size()){
                 enoughSpace = true;
             }else{
